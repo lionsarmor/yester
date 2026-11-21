@@ -1,6 +1,6 @@
 // Export the same app that Metro bundles for Android into the Pages checkout.
 import { execFileSync } from "node:child_process";
-import { cpSync, mkdtempSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { cpSync, mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,12 +16,7 @@ try {
   for (const name of ["assets", "_expo", "index.html"]) {
     cpSync(join(build, name), join(demo, name), { recursive: true });
   }
-  // Only remove superseded Metro bundles from this dedicated output directory.
-  const bundles = "_expo/static/js/web";
-  const active = new Set(readdirSync(join(build, bundles)));
-  for (const name of readdirSync(join(demo, bundles))) {
-    if (/^index-[a-f0-9]+\.js$/.test(name) && !active.has(name)) rmSync(join(demo, bundles, name));
-  }
+  // Keep published content-hashed assets addressable for cached HTML and open tabs.
 } finally {
   rmSync(build, { recursive: true, force: true });
 }
