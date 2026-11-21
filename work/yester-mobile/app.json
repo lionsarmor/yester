@@ -23,6 +23,9 @@
     },
     "plugins": [
       "./plugins/browser-transport.cjs"
-    ]
+    ],
+    "experiments": {
+      "baseUrl": "/yester"
+    }
   }
 }

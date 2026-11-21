@@ -13,7 +13,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import WebView, { type WebViewNavigation } from "react-native-webview";
+import type { WebViewNavigation } from "react-native-webview";
+import WebView from "./src/BrowserSurface";
+import { arcadeDemo } from "./src/launchAddress";
 import * as Clipboard from "expo-clipboard";
 import {
   LibraryRecord,
@@ -149,6 +151,7 @@ function Browser() {
     setPanel(which);
   }
   useEffect(() => {
+    if (Platform.OS === "web") return;
     AccessibilityInfo.isScreenReaderEnabled().then(setIsReading);
     const sub = AccessibilityInfo.addEventListener(
       "screenReaderChanged",
@@ -158,6 +161,7 @@ function Browser() {
   }, []);
   useEffect(() => {
     if (held) return;
+    if (Platform.OS === "web" && globalThis.document?.activeElement?.matches("input,textarea,button:focus-visible,[role=button]:focus-visible")) return;
     if (isReading || panel || editor) {
       setVisible(true);
       return;
@@ -261,7 +265,7 @@ function Browser() {
     function start(site?: Site) {
       if (startedRef.current) return;
       startedRef.current = true;
-      const previous = prefs.resume ? lib.data.last : null;
+      const previous = !arcadeDemo && prefs.resume ? lib.data.last : null;
       const home = site ? homepage(site) : starter;
       const target = previous || {
         url: prefs.textEdition ? home + "text.html" : home,
@@ -278,7 +282,7 @@ function Browser() {
       setVisible(!prefs.folded);
       setStarted(true);
     }
-    if (prefs.resume && lib.data.last) {
+    if (arcadeDemo || (prefs.resume && lib.data.last)) {
       start();
       return;
     }
@@ -376,6 +380,7 @@ function Browser() {
     return false;
   }
   useEffect(() => {
+    if (Platform.OS === "web") return;
     const sub = BackHandler.addEventListener("hardwareBackPress", back);
     return () => sub.remove();
   });
@@ -410,13 +415,26 @@ function Browser() {
   useEffect(() => {
     const listener = nativeControls?.addListener("shortcut", ({ action }) => {
       if (action === "address") typeAddress();
-      else if (!panel) {
+      else if (action === "dismiss") back();
+      else if (action === "grip") {
+        setFullscreen(false);
+        setVisible((current) => !current);
+        setActivity((n) => n + 1);
+      } else if (!panel) {
         if (action === "back") back();
         else if (action === "forward") travel(1);
       }
     });
     return () => listener?.remove();
   });
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    const handleExit = () => {
+      if (!globalThis.document.fullscreenElement) { setFullscreen(false); wake(); }
+    };
+    globalThis.document.addEventListener("fullscreenchange", handleExit);
+    return () => globalThis.document.removeEventListener("fullscreenchange", handleExit);
+  }, []);
   function typeAddress() {
     setAddress(url);
     show("Address");
@@ -625,6 +643,7 @@ function Browser() {
         <Art source={p.housing} />
         <View
           accessible
+          tabIndex={0}
           accessibilityRole="button"
           accessibilityLabel={
             fullscreen
@@ -647,6 +666,7 @@ function Browser() {
               if (!editor && prefs.gestures) discover();
             } else {
               if (fullscreen) {
+                if (Platform.OS === "web" && globalThis.document.fullscreenElement) void globalThis.document.exitFullscreen().catch(() => {});
                 setFullscreen(false);
                 setVisible(true);
               } else setVisible(!visible);
@@ -820,7 +840,7 @@ function Browser() {
                         setNotice(
                           Platform.OS === "ios"
                             ? "This browser cannot suspend media here. Use the player controls."
-                            : "This system WebView does not support site-wide sound control. Use the player or update Android System WebView.",
+                            : Platform.OS === "web" ? "Use this website’s own player controls." : "This system WebView does not support site-wide sound control. Use the player or update Android System WebView.",
                         );
                     },
                     soundAvailable ? undefined : "System support unavailable",
@@ -830,6 +850,10 @@ function Browser() {
                   {row(
                     fullscreen ? "Exit fullscreen" : "Fullscreen",
                     () => {
+                      if (Platform.OS === "web") {
+                        if (fullscreen && globalThis.document.fullscreenElement) void globalThis.document.exitFullscreen().catch(() => {});
+                        else if (!fullscreen) void globalThis.document.documentElement.requestFullscreen?.().catch(() => {});
+                      }
                       setFullscreen(!fullscreen);
                       setVisible(fullscreen);
                       setPanel(null);
@@ -841,6 +865,10 @@ function Browser() {
                   {row(
                     "Share",
                     () => {
+                      if (Platform.OS === "web" && !globalThis.navigator?.share) {
+                        void Clipboard.setStringAsync(url).then(() => setNotice("Page address copied."), () => setNotice("Use Address to copy the page link."));
+                        return;
+                      }
                       void Share.share({
                         message: url,
                         url,

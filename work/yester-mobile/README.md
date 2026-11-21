@@ -37,3 +37,9 @@ The standalone preview APK includes the JavaScript bundle and browser controls. 
 On the Pixel 6 virtual device running Android 15, YESTER opened the live Quarter Moon Arcade homepage and its Pond Post game room. The game entered native fullscreen and Android Back returned to the same room. An outside address opened inside YESTER. System Back and Forward traversed the room and outside page, Next discovered another member, Library retained the full game-room URL, and Create opened the production Retro Page editor. A grip swipe replaced the game WebView with one serving Switchboard Radio.
 
 Physical controller input, tablet hardware and the iPhone runtime still need device testing.
+
+## Shared Android and web alpha
+
+The Android showcase starts the web build of this app at https://yestersites.com/yester/?start=arcade. Both targets import App.tsx, the frame cabinet, library, settings, navigation and discovery. From this directory, run `npm run sync:demo` with the sibling GitHub Pages checkout present when releasing an app change. Commit the resulting Pages export with the shared source.
+
+Android uses its system WebView. The web build uses an isolated iframe for live member sites and the YesterSites navigation bridge. The editor and account flows open in a first-party tab. External sites control whether they accept embedding. Storage and bookmarks belong to the local browser or Android installation.
