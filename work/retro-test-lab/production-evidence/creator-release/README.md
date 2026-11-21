@@ -1,6 +1,6 @@
 # YesterSites creator release checks
 
-November 21, 2026, Manila time. These checks used the live account service, web editor, public member subdomains, Grub, RSS and Ring Surfer.
+November 21, 2026, Manila time. These checks used the live account service, web editor, public member subdomains, Grub, RSS and YESTER.
 
 ## Publish, reopen and restore
 
@@ -11,15 +11,15 @@ November 21, 2026, Manila time. These checks used the live account service, web 
 
 ## Finding a published site
 
-Grub search results and the public RSS feed included Switchboard Radio Club at its canonical address. Both excluded Switchboard Workbench. Ring Surfer's title lookup found Switchboard Radio Club at the same address and rejected the unlisted site's title. A direct URL continued to open the unlisted site. [Search Grub](https://yestersites.com/crawler/?q=Switchboard) · [RSS](https://yestersites-webring.jamesmweeksjr.chatgpt.site/api/feed.xml) · [Ring Surfer](https://yestersites.com/browse/)
+Grub search results and the public RSS feed included Switchboard Radio Club at its canonical address. Both excluded Switchboard Workbench. YESTER's title lookup found Switchboard Radio Club at the same address and rejected the unlisted site's title. A direct URL continued to open the unlisted site. [Search Grub](https://yestersites.com/crawler/?q=Switchboard) · [RSS](https://yestersites-webring.jamesmweeksjr.chatgpt.site/api/feed.xml) · [YESTER](https://yestersites.com/browse/)
 
 ## Media, BBS and touch controls
 
-Station Log contains an audio clip, native movie, custom HTML/CSS bulletin, Flash object and linked frame. The editor export and the published modern and phone editions each rendered one audio player, one video player and three embedded frames. The classic and text editions matched all five creator-written fallback labels and destinations. All four published editions also opened inside Ring Surfer with the same players or fallback links. This comparison checked rendered controls, counts and fallback destinations. Audio playback was exercised separately. [Station Log](https://switchboard-radio.yestersites.com/page-58a621d271184680a75958472f88289f.html) · [Phone player screenshot](ring-phone-member-player.png) · [Classic fallback screenshot](ring-classic-member-links.png)
+Station Log contains an audio clip, native movie, custom HTML/CSS bulletin, Flash object and linked frame. The editor export and the published modern and phone editions each rendered one audio player, one video player and three embedded frames. The classic and text editions matched all five creator-written fallback labels and destinations. All four published editions also opened inside YESTER with the same players or fallback links. This comparison checked rendered controls, counts and fallback destinations. Audio playback was exercised separately. [Station Log](https://switchboard-radio.yestersites.com/page-58a621d271184680a75958472f88289f.html) · [Phone player screenshot](ring-phone-member-player.png) · [Classic fallback screenshot](ring-classic-member-links.png)
 
 An anonymous BBS caller posted a one-liner. A second caller with a fresh session read the line. Command **1** opened Station Log, **F** downloaded the creator's 45-byte `RADIO.BIN` with the expected filename and exact contents, and **D** opened the configured Pixel Club door. These tests exercised the public web BBS. [Open the 40-column BBS](https://switchboard-radio.yestersites.com/bbs/?page=home&columns=40)
 
-In Chromium's Pixel 5 touch profile, a tap followed Station Log inside the member frame. A tap on the illustrated play control started audio and advanced playback time. Swiping inside the member page navigated to the next site, unloaded the playing document and left the outer player paused. Bookmark and Share preserved the exact Station Log URL. Both the saved bookmark and the copied link reopened that page. Physical handset testing remains separate. [Open Switchboard in Ring Surfer](https://yestersites.com/browse/?url=https%3A%2F%2Fswitchboard-radio.yestersites.com%2F)
+In Chromium's Pixel 5 touch profile, a tap followed Station Log inside the member frame. A tap on the illustrated play control started audio and advanced playback time. Swiping inside the member page navigated to the next site, unloaded the playing document and left the outer player paused. Bookmark and Share preserved the exact Station Log URL. Both the saved bookmark and the copied link reopened that page. Physical handset testing remains separate. [Open Switchboard in YESTER](https://yestersites.com/browse/?url=https%3A%2F%2Fswitchboard-radio.yestersites.com%2F)
 
 ## Recovery, HTTPS and historical bookmarks
 
