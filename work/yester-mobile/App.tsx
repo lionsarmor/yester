@@ -392,6 +392,11 @@ function Browser() {
     setPanel(null);
     wake();
   }
+  function retryPage() {
+    if (editor) create(url);
+    else if (trail.current.url === url) mountPage(trail.current);
+    else visit(url);
+  }
   function routePopup(href: string) {
     if (
       editor &&
@@ -479,7 +484,7 @@ function Browser() {
             </Text>
           </View>
         )}
-        {started && (
+        {started && !error && (
           <WebView<object>
             key={document.key}
             ref={view}
@@ -555,7 +560,6 @@ function Browser() {
             onLoadStart={() => {
               if (document.key === generation.current) {
                 setBusy(true);
-                setError("");
                 void configureAudio(desiredMute.current);
               }
             }}
@@ -565,29 +569,46 @@ function Browser() {
                 void configureAudio(desiredMute.current);
               }
             }}
-            onError={(e) => {
-              if (document.key === generation.current)
-                setError(e.nativeEvent.description || "Connection failed");
+            onError={(event) => {
+              event.preventDefault();
+              if (document.key !== generation.current) return;
+              const failedUrl = webURL(event.nativeEvent.url) || url;
+              generation.current++;
+              setBusy(false);
+              setNative({ back: false, forward: false });
+              setUrl(failedUrl);
+              setError(
+                event.nativeEvent.description ||
+                  "The server could not be reached.",
+              );
+              wake();
             }}
           />
         )}
         {!!error && (
           <View
             style={[
-              c.backdrop,
               {
+                flex: 1,
                 justifyContent: "center",
                 backgroundColor: p.paper,
                 padding: 22,
               },
             ]}
           >
-            <Text style={{ color: p.ink, fontSize: 20 }}>Page unavailable</Text>
+            <Image
+              source={p.icons.reload}
+              style={{ width: 34, height: 34 }}
+              resizeMode="contain"
+            />
+            <Text
+              accessibilityRole="header"
+              style={{ color: p.ink, fontSize: 20, fontWeight: "bold" }}
+            >
+              Page unavailable
+            </Text>
             <Text style={{ color: p.ink, marginVertical: 12 }}>{error}</Text>
-            {row("Try again", () => {
-              setError("");
-              view.current?.reload();
-            })}
+            {row("Try again", retryPage, new URL(url).host, false, "reload")}
             {row("Discover another site", () => discover())}
           </View>
         )}
@@ -719,7 +740,8 @@ function Browser() {
                   if (busy) {
                     view.current?.stopLoading();
                     setBusy(false);
-                  } else view.current?.reload();
+                  } else if (error) retryPage();
+                  else view.current?.reload();
                   wake();
                 }}
               />
