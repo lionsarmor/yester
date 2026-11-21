@@ -6,6 +6,18 @@ Open this page on your Android phone or tablet, download the APK, and tap it in 
 
 Try the [interactive Android preview](https://android.yestersites.com/) to explore the 15 browser frames. Compare the [design boards](outputs/yester-mobile/design-review) with the [frames photographed in the Android emulator](outputs/yester-mobile/review/frame-cabinet.jpg).
 
+## Screenshots
+
+Quarter Moon Arcade in **Pigeon Press**, Pocket Bog in **Cable Guide 96**, and the **frame cabinet** where you can switch between them.
+
+<p>
+  <a href="outputs/yester-mobile/review/phone/pigeon-press-arcade.png"><img src="outputs/yester-mobile/review/phone/pigeon-press-arcade.png" width="220" alt="Quarter Moon Arcade open in YESTER with the blue Pigeon Press title bar and pigeon navigation controls"></a>
+  <a href="outputs/yester-mobile/review/phone/Cable%20Guide%2096%20-%20pocket-bog.png"><img src="outputs/yester-mobile/review/phone/Cable%20Guide%2096%20-%20pocket-bog.png" width="220" alt="Pocket Bog’s creature diary open in the colorful Cable Guide 96 browser frame"></a>
+  <a href="outputs/yester-mobile/review/phone/pigeon-frame-cabinet.png"><img src="outputs/yester-mobile/review/phone/pigeon-frame-cabinet.png" width="220" alt="YESTER’s Android frame cabinet with selectable browser skin previews"></a>
+</p>
+
+[Android landing page on a phone](outputs/yester-mobile/review/phone/android-landing-390.png) · [More Android screenshots](outputs/yester-mobile/review/phone)
+
 ## The project
 
 | Component | Source |
