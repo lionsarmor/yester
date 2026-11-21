@@ -178,18 +178,18 @@ export function Settings({
                     }}
                     style={{ width: "50%", padding: 4 }}
                   >
-                    <Image
-                      source={specimens[name]}
-                      resizeMode="stretch"
-                      accessible={false}
+                    <View
                       style={{
                         width: "100%",
-                        aspectRatio: 1.5,
+                        aspectRatio: 374 / 258,
                         borderWidth: 2,
+                        overflow: "hidden",
                         borderColor:
                           name === (preview || prefs.frame) ? p.accent : p.edge,
                       }}
-                    />
+                    >
+                      <Art source={specimens[name]} />
+                    </View>
                     <Text style={{ color: p.ink, fontWeight: "bold" }}>
                       {name}
                       {name === prefs.frame ? " ✓" : ""}

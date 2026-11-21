@@ -464,6 +464,21 @@ function Browser() {
           setActivity((n) => n + 1);
         }}
       >
+        {!started && (
+          <View
+            accessibilityLiveRegion="polite"
+            style={[c.center, { backgroundColor: p.paper }]}
+          >
+            <Image
+              source={p.icons.discover}
+              resizeMode="contain"
+              style={{ width: 40, height: 40 }}
+            />
+            <Text style={{ color: p.ink, fontSize: 18, fontWeight: "bold" }}>
+              Opening the neighborhood…
+            </Text>
+          </View>
+        )}
         {started && (
           <WebView<object>
             key={document.key}
@@ -781,7 +796,9 @@ function Browser() {
                       if (soundAvailable) void configureAudio(!quiet);
                       else
                         setNotice(
-                          "This system WebView does not support site-wide sound control. Use the player or update Android System WebView.",
+                          Platform.OS === "ios"
+                            ? "This browser cannot suspend media here. Use the player controls."
+                            : "This system WebView does not support site-wide sound control. Use the player or update Android System WebView.",
                         );
                     },
                     soundAvailable ? undefined : "System support unavailable",
