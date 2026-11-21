@@ -43,7 +43,7 @@ async function check(path,expected,options) {
   return response;
 }
 function sample(source) {
-  if(source==='desktop')return JSON.parse(execFileSync(workPath('desktop-qa/python'),['-c',[
+  if(source==='desktop')return JSON.parse(execFileSync(process.env.PYTHON || 'python3',['-c',[
     'import json,sys',
     'sys.path.insert(0,sys.argv[1])',
     'from app import make_sample',
