@@ -1,0 +1,20 @@
+Spectrum Next · https://firefly-film-club.yestersites.com · /tmp/ys-firefly-zero/next
+Breakpoint 1 at 0x56790
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, 0x00005555555aa790 in main ()
+[New Thread 0x7ffff54b86c0 (LWP 67772)]
+[New Thread 0x7ffff4cb76c0 (LWP 67773)]
+[New Thread 0x7ffff44b66c0 (LWP 67774)]
+[Thread 0x7ffff54b86c0 (LWP 67772) exited]
+[Thread 0x7ffff4cb76c0 (LWP 67773) exited]
+[New Thread 0x7ffff4cb76c0 (LWP 67775)]
+[Thread 0x7ffff44b66c0 (LWP 67774) exited]
+[New Thread 0x7ffff44b66c0 (LWP 67776)]
+[Thread 0x7ffff44b66c0 (LWP 67776) exited]
+[New Thread 0x7ffff54b86c0 (LWP 67777)]
+[Thread 0x7ffff54b86c0 (LWP 67777) exited]
+[New Thread 0x7ffff3cb56c0 (LWP 67778)]
+[New Thread 0x7ffff34b46c0 (LWP 67779)]
+[Thread 0x7ffff3cb56c0 (LWP 67778) exited]

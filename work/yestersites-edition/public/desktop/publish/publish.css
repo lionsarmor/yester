@@ -1,0 +1,10 @@
+html{background:#15605e}
+body{margin:0;padding:2em 1em;color:#222;font:1rem/1.5 Arial,sans-serif}
+main{max-width:36em;margin:2em auto;background:#e9e6d9;border:3px outset #f6f4ed;padding:0 1.3em 1em}
+header{margin:0 -1.3rem 1.3rem;padding:5px 12px;background:#233a68;color:white;font-weight:bold}header a{color:#fff4c2}
+h1{font: bold 2em/1.05 Georgia,serif;color:#34254e}h2{font: bold 1.4em Georgia,serif;margin:.3em 0 .6em}
+.choose{border:1px solid #837e6d;padding:.65em .8em}.choose label{display:block;font-weight:bold;margin-bottom:.25em}
+input{max-width:100%}section{background:#ffffe7;padding:.8em 1em;border:2px inset #e9e6d9}
+dl{display:grid;grid-template-columns:minmax(7rem,1fr) 2fr;gap:.3rem .8rem;margin:0}
+dt{font-weight:bold}dd{margin:0;overflow-wrap:anywhere}button{padding:.45em 1em;font:inherit;font-weight:bold;border:3px outset #e8e3d2;background:#eeeade;color:#211b30}
+button[disabled]{color:#756f72}button:enabled:active{border-style:inset}a{color:#30267c}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #135897}

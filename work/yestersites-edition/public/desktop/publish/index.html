@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Publish desktop project · YesterSites</title><link rel="stylesheet" href="publish.css"><script defer src="format.js"></script><script defer src="member-storage.js"></script><script defer src="craft.js"></script><script defer src="media.js"></script><script defer src="objects.js"></script><script defer src="presets.js"></script><script defer src="bbs-codec.js"></script><script defer src="project.js"></script><script defer src="prepare.js"></script><script defer src="publish.js"></script><link rel="stylesheet" href="/assets/member-nav.css"><script defer src="/assets/member-nav.js"></script></head>
+<body><div class="member-strip"><span class="ys-members" data-member-nav><a data-signin href="https://yestersites-webring.jamesmweeksjr.chatgpt.site/signin/">Sign in</a><a data-join href="https://yestersites-webring.jamesmweeksjr.chatgpt.site/signup/">Join</a><details data-account hidden><summary><span data-handle>Account</span></summary><span class="ys-menu"><a href="https://yestersites-webring.jamesmweeksjr.chatgpt.site/account/">My Sites</a><a href="https://yestersites-webring.jamesmweeksjr.chatgpt.site/account/profile/">My profile</a><a href="https://yestersites-webring.jamesmweeksjr.chatgpt.site/signout/">Sign out</a></span></details></span></div>
+<main>
+<header><a href="../../index.html">YesterSites</a> / Desktop publishing</header>
+<h1>Publish your homepage</h1>
+<p>Review your pages, pictures and directory listing. The first publication claims the address for your account.</p>
+<div class="choose"><label for="project">Open a saved .yst project</label><input id="project" type="file" accept=".yst,.json,application/json"></div>
+<p role="status" id="state">Reading project…</p>
+<section id="review" hidden aria-label="Project to publish">
+<h2 id="title"></h2>
+<dl><dt>Site address</dt><dd id="address"></dd><dt>Webmaster</dt><dd id="byline"></dd><dt>Page format</dt><dd id="profile"></dd><dt>Canvas</dt><dd id="dimensions"></dd><dt>Directory listing</dt><dd id="listed"></dd></dl>
+</section>
+<p><a id="signin" target="_top" hidden href="/api/login?returnTo=%2Fdesktop%2Fpublish%2F">Sign in to YesterSites</a></p>
+<button id="send" type="button" disabled>Publish this version</button>
+<section id="history-section" hidden><h2>Published versions</h2><label>Version <select id="versions"></select></label> <button type="button" id="restore">Restore selected version</button></section>
+<p id="result" aria-live="polite"></p>
+<noscript><p>Enable JavaScript to send your project from this page.</p></noscript>
+</main></body></html>

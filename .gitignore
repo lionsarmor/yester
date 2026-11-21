@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+*.jks
+*.p12
+*.pem
+*.key
+*.apk
+/private/
+/outputs/private/
+work/yestersites-edition/dist/

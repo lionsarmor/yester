@@ -1,0 +1,8 @@
+{
+  "client": "Internet Explorer 5 on Windows 98 SE",
+  "action": "Selected the F file-area link in the guest BBS, saved to the disposable guest disk, and read the saved file back from FAT.",
+  "url": "https://switchboard-radio.yestersites.com/bbs-files/home/2/RADIO.BIN",
+  "length": 45,
+  "sha256": "568feb7d06573be98459a52081c6576a7b18a2e6952eacdc3516d77e3f530232",
+  "matches_creator_upload": true
+}

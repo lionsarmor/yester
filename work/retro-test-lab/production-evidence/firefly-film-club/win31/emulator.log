@@ -1,0 +1,134 @@
+Windows 3.1 · https://firefly-film-club.yestersites.com · /home/roddy/Documents/Codex/2026-11-20/i-x20/work/retro-test-lab/production-evidence/firefly-film-club/win31
+Opening http://firefly-film-club.yestersites.com:35031/INDEX.HTM
+LOG: Early LOG Init complete
+LOG: DOSBox-X's working directory: /tmp/retro-pages-win31-ttoxzltc
+LOG: Logging init: beginning logging proper. This is the end of the early init logging
+LOG: Logging: No logfile was given. All further logging will be discarded.
+LOG: DOSBox-X version 2024.03.01 Commit 02f36ba (Linux SDL2 64-bit)
+LOG: SDL: version 2.30.0, Video x11, Audio pulseaudio
+LOG: Host keyboard layout is now  ()
+LOG: Mapper keyboard layout is now  ()
+LOG: SDL2 reports desktop display mode 1200 x 1000
+LOG: Configured windowposition: -
+LOG: SDL: Current window pixel format: SDL_PIXELFORMAT_RGB888
+LOG: SDL: You are running in 24 bpp mode, this will slow down things!
+LOG: X11 main window is 640 x 400 maximized=0
+LOG: X11 extension XRANDR is available
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(640,400) match=(320,200)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG: ISA BCLK: 8333333.333Hz (25000000/3)
+LOG: monopal: green, 
+LOG: Active save slot: 1 [Empty]
+LOG: USING AVI+ZMBV
+LOG: Max 3670016 sz 32768
+LOG: Final 32768
+LOG: SDLNet_TCP_Open: Couldn't connect to remote host
+LOG: TiMidity: can't open control connection (host=127.0.0.1, port=7777)
+LOG: MIDI:fluidsynth: SoundFont not specified, and no system SoundFont found
+LOG: MIDI:synth: Specify .SF2 sound font file with midiconfig=
+LOG: MT32: failed to locate ROMs.
+LOG: MT32 emulation requires the PCM and CONTROL ROM files.
+LOG: To eliminate this error message, check the DOSBox-X wiki.
+LOG: The ROM files are: CM32L_CONTROL.ROM and CM32L_PCM.ROM or MT32_CONTROL.ROM and MT32_PCM.ROM
+LOG: MIDI:Opened device:none
+LOG: Pentium CMPXCHG8B emulation is enabled
+LOG: VOODOO LFB now at d0000000
+LOG: Serial1: BASE 3f8h
+LOG: Serial2: BASE 2f8h
+LOG: Parallel1: BASE 378h
+LOG: MPU-401 Registering I/O ports as if IBM PC MPU-401 at base 330h
+LOG: Memory I/O complexity optimization enabled aka option 'memory io optimization 1'. If the game or demo is unable to draw to the screen properly, set the option to false.
+LOG: The 'scanline render on demand' option is available and may provide a modest boost in video render performance if set to true.
+LOG: GetDesktopResolution reading X11 desktop resolution
+LOG: Root window (ID 1135) is 1200 x 1000
+LOG: X11 main window is 640 x 400 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(640,400) match=(320,200)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG: Allocated APM BIOS pm entry point at f000:ce20
+LOG: Writing code to fce20
+LOG: Writing code to fce40
+LOG: SLIRP: Slirp version: 4.7.0
+LOG: SLIRP: Successfully initialized
+LOG: ETHERNET: NE2000 Ethernet emulation backend selected: slirp
+LOG: NE2000: Base=0x300 irq=3
+LOG: X11 main window is 640 x 400 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(640,400) match=(320,200)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG: ISA Plug & Play BIOS enabled
+LOG: VGA ROM BIOS init callback
+LOG: pixratio 1.000, dw false, dh false
+LOG: Aspect ratio: 640 x 480  xToY=1.333 yToX=0.750
+LOG: menuScale=1
+LOG: surface consider=640x497 final=640x497
+LOG: X11 main window is 640 x 497 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(640,497) match=(320,248)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG: WARNING: No translation support (to host) for code page 0
+LOG: pixratio 1.350, dw false, dh false
+LOG: Aspect ratio: 720 x 540  xToY=1.333 yToX=0.750
+LOG: menuScale=1
+LOG: surface consider=720x417 final=720x417
+LOG: X11 main window is 720 x 417 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(720,417) match=(360,208)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG:   28644727 ERROR BIOS:Keyboard layout file auto not found
+LOG:   28644727 ERROR BIOS:Keyboard layout file auto not found
+LOG: XMS: 50 handles allocated for use by the DOS environment
+LOG: EMS page frame at 0xe000-0xefff
+LOG: COMMAND.COM env size:             720 bytes
+LOG: COMMAND.COM environment block:    0x0701 sz=0x002d
+LOG: COMMAND.COM main body (PSP):      0x072f sz=0x009a
+LOG: COMMAND.COM stack:                0x0749
+LOG:   28694651 ERROR INT10:Function 6F00 not supported
+LOG: DEBUG: INT 2Fh Windows 286/386 DOSX init broadcast issued (ES:BX=0000:0000 DS:SI=0000:0000 CX=0000 DX=0000 DI=030a(aka version 3.10))
+LOG:  [Enhanced mode]
+LOG: 
+LOG:   29246337 ERROR CPU:Illegal Unhandled Interrupt Called 68
+LOG:   29458303 ERROR CPU:Illegal Unhandled Interrupt Called 5C
+LOG: DEBUG: INT 2Fh Windows virtual device 'PAGEFILE' callout (BX(deviceID)=0x0021 CX(function)=0x0000)
+LOG: DEBUG: INT 2Fh Windows virtual device 'VMD' callout (BX(deviceID)=0x000c CX(function)=0x0001)
+LOG: INT 15h mouse initialized to 3-byte protocol
+LOG: INT 15h mouse reset
+LOG: INT 15h reporting mouse device ID 0x00
+LOG: DEBUG: INT 2Fh Windows virtual device 'DOSMGR' callout (BX(deviceID)=0x0015 CX(function)=0x0000)
+LOG: DEBUG: INT 2Fh Windows virtual device 'DOSMGR' callout (BX(deviceID)=0x0015 CX(function)=0x0004)
+LOG: DEBUG: INT 2Fh Windows virtual device 'DOSMGR' callout (BX(deviceID)=0x0015 CX(function)=0x0001)
+LOG: DEBUG: INT 2Fh Windows virtual device 'DOSMGR' callout (BX(deviceID)=0x0015 CX(function)=0x0003)
+LOG: DEBUG: INT 2Fh Windows virtual device 'DOSMGR' callout (BX(deviceID)=0x0015 CX(function)=0x0005)
+LOG: DEBUG: INT 2Fh Windows virtual device 'PAGEFILE' callout (BX(deviceID)=0x0021 CX(function)=0x0000)
+LOG: DEBUG: INT 2Fh Windows virtual device 'V86MMGR' callout (BX(deviceID)=0x0006 CX(function)=0x0000)
+LOG: DEBUG: INT 2Fh Windows virtual device 'VMD' callout (BX(deviceID)=0x000c CX(function)=0x0000)
+LOG: pixratio 1.200, dw false, dh false
+LOG: Aspect ratio: 640 x 480  xToY=1.333 yToX=0.750
+LOG: menuScale=1
+LOG: surface consider=640x417 final=640x417
+LOG: X11 main window is 640 x 417 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(640,417) match=(320,208)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG:   37601128 ERROR MOUSE:Unhandled videomode 6B on reset
+LOG:   37612012 ERROR INT10:Function 7F00 not supported
+LOG: pixratio 1.000, dw false, dh false
+LOG: Aspect ratio: 800 x 600  xToY=1.333 yToX=0.750
+LOG: menuScale=1
+LOG: surface consider=800x617 final=800x617
+LOG: X11 main window is 800 x 617 maximized=0
+LOG: XRandR CRTC 0: pos=(0,0) size=(1200,1000) outputs=1
+LOG: Our window lies on this CRTC display (window pos=(0,0) size=(800,617) match=(400,308)).
+LOG:   Goes to output 0: name='screen' size_mm=(0 x 0)
+LOG: Screen report: Method 'XRandR' (1200.000 x 1000.000 pixels) at (0.000 x 0.000) (0.000 x 0.000 mm) (0.000 x 0.000 in) (-1.000 x -1.000 DPI)
+LOG: BX_ERROR: ne2K: dma read underrun iolen=2 remote_bytes=1
+LOG: BX_ERROR: ne2K: dma read underrun iolen=2 remote_bytes=1
+XIO:  fatal IO error 22 (Invalid argument) on X server ":2"
+      after 967 requests (967 known processed) with 0 events remaining.

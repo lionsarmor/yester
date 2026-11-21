@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1795166940636,
+      "tag": "0000_member_sites",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795174618791,
+      "tag": "0001_published_revisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795183113271,
+      "tag": "0002_daily_visits",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1795185056291,
+      "tag": "0003_webmaster_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795185984542,
+      "tag": "0004_local_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1795195917323,
+      "tag": "0005_editor_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795212464663,
+      "tag": "0006_member_badge",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1795213126536,
+      "tag": "0007_webmaster_cards",
+      "breakpoints": true
+    }
+  ]
+}

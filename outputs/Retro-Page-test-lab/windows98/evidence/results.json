@@ -1,0 +1,44 @@
+{
+  "os": "Windows 98 Second Edition",
+  "browser": "Microsoft Internet Explorer",
+  "version": "5.00.2614.3500",
+  "source": "read-only local Joliet website CD",
+  "navigation": [
+    "D:\\classic.html",
+    "Station Log via hyperlink",
+    "Links via hyperlink",
+    "Text edition via hyperlink"
+  ],
+  "sample_cd_sha256": "0da049000c3aaf466a64c41f09b93b49be659d7c7a160b617b53179a42a2a1df",
+  "export_files_sha256": {
+    "classic.html": "9ea9c6eb7b843fad570228049a22bd74f7d9e2bf13c8114b72a3722f760bcafc",
+    "images/0d72ead048be4fa387b5beaee2e97469-lettering-2.gif": "cca233ac71a24d6bf98356ace061005d4fa931616be4f00139e01eb276b9d926",
+    "images/0d72ead048be4fa387b5beaee2e97469-picture-1.gif": "8e2fcbc1119dc89fdf57ad8bae92c819b0fdcc1af41e9c4fb2a01e80cf5d1117",
+    "images/b540a88d3c304fdeb165d640eb0fe1a5-lettering-2.gif": "889b79cb6e947692d797bc7e65b87b57f3ea6bde3a2101ce77de29f90981e510",
+    "images/b540a88d3c304fdeb165d640eb0fe1a5-picture-1.gif": "8e2fcbc1119dc89fdf57ad8bae92c819b0fdcc1af41e9c4fb2a01e80cf5d1117",
+    "images/lettering-8.gif": "3fa230f9993d0f0eed742269274ff8d41799f47e13817c5df1e2e623c88d9205",
+    "images/picture-1.gif": "8e2fcbc1119dc89fdf57ad8bae92c819b0fdcc1af41e9c4fb2a01e80cf5d1117",
+    "images/picture-9.gif": "56d7ac253d95fa83592766838c226e6bb6b0e0b023733fe3c77e746c0ea7cc03",
+    "index.html": "98ef5adc8cc75149b24397332443a3dc9e84fc9e3047df0a442083dde9871f2a",
+    "modern.html": "42e22b5853b74a827b78fb93f312d48b538990d6fc931930141626030efb4ec5",
+    "page-0d72ead048be4fa387b5beaee2e97469-classic.html": "991fda944b344e6649ab62f0fa763d7854ad7eb43b9240f274bbb934bc32e6ee",
+    "page-0d72ead048be4fa387b5beaee2e97469-modern.html": "7f0a3dfc227a57fbad6cf7a60d9bb9fc1b1e9937a6283833a63cbe31148a3084",
+    "page-0d72ead048be4fa387b5beaee2e97469-phone.html": "ad2ab7535ce2493353766646c5930e0deef451c3c30b55d87182fd5dac8129f8",
+    "page-0d72ead048be4fa387b5beaee2e97469-text.html": "8039798cec77c411bb6c2507cd6f7e8e6f12ebab9930d954044c2394a26d4754",
+    "page-0d72ead048be4fa387b5beaee2e97469.html": "8dac7c78e324f2026de9925d496bd460dff701d1f1866e305537e8767f05db75",
+    "page-b540a88d3c304fdeb165d640eb0fe1a5-classic.html": "7d9ce4e0b8cf33c1db8a44368a3ad7dc1f50e772af830a34a4728590bca6a4f5",
+    "page-b540a88d3c304fdeb165d640eb0fe1a5-modern.html": "da242c509a53570e01fcc5d7095ddb75d28beb27cfc0615cc32fc5b8a300b9f7",
+    "page-b540a88d3c304fdeb165d640eb0fe1a5-phone.html": "06ed6e026ecf098580752c80e30261071d2b798255fcc44bf916c700da9f16f7",
+    "page-b540a88d3c304fdeb165d640eb0fe1a5-text.html": "ce87e3d5a39c9e5da4b2aef4b25cc0848dbb395e7a0835b7d051a516c4228d7e",
+    "page-b540a88d3c304fdeb165d640eb0fe1a5.html": "baff752d943fe99f25e149374d9338abc0a9079f63c7f30f2ab908042f0e16d3",
+    "phone.html": "3b950359b766cb2aca6f8329425246e05fd1cd31408be63c4c149937ca7f56ce",
+    "text.html": "a6cea85143067575ea6705479527f6bddff566909ad66448b0087024d050a081"
+  },
+  "screenshots_sha256": {
+    "01-classic-home.png": "03a6e882f4926f80e9d4dc64537a659a27ec08eab3ec1f2904cbd18ed70c6628",
+    "02-station-log.png": "56256f1145c347e3511f46514b5d646426bbc28aa870491c17756f454ee4c885",
+    "03-links.png": "7c9a7e076a31d35e3e0b0af084a22808a3f53ce3d296506bba6cbd924abe30a5",
+    "04-text-edition.png": "af12b37922f1cdb6d945b1a4a7c4a5b6a977902c6aa8a885c1f1107d05941862",
+    "05-ie-version.png": "314f8b7ce3e7e6dec4379e93a2f4c83637f2b34e4ab4928bb60aeaba38d900d1"
+  }
+}

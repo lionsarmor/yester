@@ -1,0 +1,118 @@
+[
+  {
+    "slug": "signal",
+    "title": "The Committee for the Extra Moon",
+    "profile": "classic",
+    "links": [
+      "orbit"
+    ],
+    "excerpt": "A neighborhood sky survey follows a disputed second moon down to the Hendersons’ garage roof.",
+    "keywords": []
+  },
+  {
+    "slug": "orbit",
+    "title": "Moon Hoops ’99",
+    "profile": "millennium",
+    "links": [
+      "nightshift",
+      "signal"
+    ],
+    "excerpt": "Finals reports from Section 8C, player cards and an interplanetary game that ran two days past the buzzer.",
+    "keywords": []
+  },
+  {
+    "slug": "nightshift",
+    "title": "Dead Air 730 AM",
+    "profile": "classic",
+    "links": [
+      "orbit",
+      "pixelclub"
+    ],
+    "excerpt": "Overnight desert radio. An ice machine at the Blue Moon Motor Lodge is on line two.",
+    "keywords": []
+  },
+  {
+    "slug": "pixelclub",
+    "title": "Dot’s Pixel Attic",
+    "profile": "classic",
+    "links": [
+      "modem",
+      "nightshift"
+    ],
+    "excerpt": "Hand-drawn stickers, a pocket-sized diskette and a very opinionated eggplant in a raincoat.",
+    "keywords": []
+  },
+  {
+    "slug": "modem",
+    "title": "The Busy Signal BBS",
+    "profile": "text",
+    "links": [
+      "pixelclub",
+      "signal"
+    ],
+    "excerpt": "Switch the pigeon runs this dial-up exchange. Browse the message spool, try a door game, or save an ASCII postcard.",
+    "keywords": []
+  },
+  {
+    "slug": "moon-relay",
+    "title": "Moon Relay Tape Shrine",
+    "profile": "millennium",
+    "links": [],
+    "excerpt": "Miki paused her VHS copy six seconds too late. Help her identify the caller at the lunar switchboard.",
+    "keywords": [
+      "anime",
+      "shrine",
+      "VHS",
+      "fansub",
+      "episode",
+      "guide",
+      "2002"
+    ]
+  },
+  {
+    "slug": "player-two",
+    "title": "Player Two Repair Club",
+    "profile": "classic",
+    "links": [],
+    "excerpt": "Two Nintendo fans, one suspect link cable, and a lunch-break Tetris match still in pencil.",
+    "keywords": [
+      "Game",
+      "Boy",
+      "Nintendo",
+      "link",
+      "cable",
+      "retro",
+      "gaming",
+      "club",
+      "Tetris"
+    ]
+  },
+  {
+    "slug": "screening-room",
+    "title": "The Screening Room",
+    "profile": "classic",
+    "links": [],
+    "excerpt": "Five channels at the neighborhood film society. Try YouTube, Rumble, an Archive movie, a direct MP4 and the radio booth.",
+    "keywords": [
+      "movie",
+      "players",
+      "video",
+      "sound",
+      "cinema"
+    ]
+  },
+  {
+    "slug": "late-night-signal",
+    "title": "Late Night Signal",
+    "profile": "classic",
+    "links": [
+      "nightshift"
+    ],
+    "excerpt": "Station logs and late-night signals from the radio shack.",
+    "keywords": [
+      "radio",
+      "station",
+      "scanner"
+    ]
+  }
+]

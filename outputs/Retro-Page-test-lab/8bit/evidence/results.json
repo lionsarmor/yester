@@ -1,0 +1,77 @@
+{
+  "c64": {
+    "sequence": [
+      "Home",
+      "1 -> Station Log",
+      "H -> Home",
+      "2 -> Links"
+    ],
+    "guest_pixels_equal_after_home_return": true,
+    "captures_sha256": {
+      "home": "e2a178f81bed01ffebd2eed8559afb7e453a7e0f6d59feaa6d6a5c4a7235d9d2",
+      "station-log": "2d528747d2bc2bbbeb1ece8d6745a26a95c1594a68d0c27f1981b72fffed5a2c",
+      "home-return": "e2a178f81bed01ffebd2eed8559afb7e453a7e0f6d59feaa6d6a5c4a7235d9d2",
+      "links": "9fed4164b25621d235a6f85a06ea0d9bdcae702ce280be870f191e56a3bd2d47"
+    }
+  },
+  "x16": {
+    "sequence": [
+      "Home",
+      "1 -> Station Log",
+      "H -> Home",
+      "2 -> Links"
+    ],
+    "guest_pixels_equal_after_home_return": true,
+    "captures_sha256": {
+      "home": "7ca4b1f8f30f45984bfb7a2ae12391ee0776645b638564e986b22a079d1eb359",
+      "station-log": "db75dc485a0164b45feeba49694d9770ac78a66499ad261471c82e34c20a4c06",
+      "home-return": "7ca4b1f8f30f45984bfb7a2ae12391ee0776645b638564e986b22a079d1eb359",
+      "links": "7de11d0633a814c4ea4bf2b2edaf3ca721bc8b13aaedf588a1eba27ea564e17d"
+    }
+  },
+  "next": {
+    "sequence": [
+      "Home",
+      "1 -> Station Log",
+      "H -> Home",
+      "2 -> Links"
+    ],
+    "guest_pixels_equal_after_home_return": true,
+    "captures_sha256": {
+      "home": "cfe3916bd2b8858a01839693686c965660db4f8828d5ab118cdbfc6a35aaa171",
+      "station-log": "ed965933e5a34a1c40efd74521469c1334af46c223be72f42a9d7dc51391c16d",
+      "home-return": "cfe3916bd2b8858a01839693686c965660db4f8828d5ab118cdbfc6a35aaa171",
+      "links": "d16a25f40dd835ef4b4760d30da3c891027648859f20a7147c686decade495fb"
+    }
+  },
+  "spectrum48": {
+    "sequence": [
+      "Home",
+      "1 -> Station Log",
+      "H -> Home",
+      "2 -> Links"
+    ],
+    "guest_pixels_equal_after_home_return": true,
+    "captures_sha256": {
+      "home": "cfe3916bd2b8858a01839693686c965660db4f8828d5ab118cdbfc6a35aaa171",
+      "station-log": "ed965933e5a34a1c40efd74521469c1334af46c223be72f42a9d7dc51391c16d",
+      "home-return": "cfe3916bd2b8858a01839693686c965660db4f8828d5ab118cdbfc6a35aaa171",
+      "links": "d16a25f40dd835ef4b4760d30da3c891027648859f20a7147c686decade495fb"
+    }
+  },
+  "c64-serial": {
+    "sequence": [
+      "Home",
+      "1 -> Station Log",
+      "H -> Home",
+      "2 -> Links"
+    ],
+    "guest_pixels_equal_after_home_return": true,
+    "captures_sha256": {
+      "home": "119b56a688cc7732540b7142bf46cad343cc9d50c31c41d35f19f035bd143f87",
+      "station-log": "26d87539c419c33dcedc8284b7723315ca32ddaf8359ab56ad407a381a22ffaf",
+      "home-return": "5e09eb8c988777e20c6d1dfc6748df3cf9ef46e4763fcfa921980b20071647b3",
+      "links": "fc8bba7f09ae79fc700d70b9d48742d55a40abba84270d9ed5359916ae47d414"
+    }
+  }
+}

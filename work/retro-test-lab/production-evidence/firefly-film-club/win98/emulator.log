@@ -1,0 +1,12 @@
+Windows 98 SE · https://firefly-film-club.yestersites.com · /home/roddy/Documents/Codex/2026-11-20/i-x20/work/retro-test-lab/production-evidence/firefly-film-club/win98
+/home/roddy/Desktop/lionsarmor/BUDDY/.tools/qemu-6.2/root/usr/bin/qemu-system-i386: /lib/x86_64-linux-gnu/libnl-3.so.200: no version information available (required by /home/roddy/Desktop/lionsarmor/BUDDY/.tools/qemu/root/usr/lib/x86_64-linux-gnu/librdmacm.so.1)
+Windows 98 COM1: HELLO
+Windows 98 COM1: READY
+Windows 98 COM1: GET /moon-relay/classic.html
+Windows 98 COM1: GET /INDEX.HTM
+Windows 98 gateway: /INDEX.HTM 200 2112
+Windows 98 COM1: GET /CCC6A98C.GIF
+Windows 98 gateway: /CCC6A98C.GIF 200 6732
+Windows 98 COM1: GET /E7E7DD5D.GIF
+Windows 98 gateway: /E7E7DD5D.GIF 200 44208
+qemu-system-i386: terminating on signal 15 from pid 65291 (/usr/bin/python3)

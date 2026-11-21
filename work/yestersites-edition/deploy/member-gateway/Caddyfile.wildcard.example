@@ -1,0 +1,6 @@
+# Use with an automatically renewed wildcard certificate (DNS-01).
+# These are example paths to the managed certificate chain and key.
+*.yestersites.com {
+	tls /etc/yestersites-tls/fullchain.pem /etc/yestersites-tls/privkey.pem
+	reverse_proxy 127.0.0.1:8137
+}

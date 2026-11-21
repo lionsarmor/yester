@@ -1,0 +1,6 @@
+[submodule "work/github-pages"]
+	path = work/github-pages
+	url = https://github.com/lionsarmor/yestersites.git
+[submodule "work/retro-page-web"]
+	path = work/retro-page-web
+	url = https://github.com/lionsarmor/retro-page.git

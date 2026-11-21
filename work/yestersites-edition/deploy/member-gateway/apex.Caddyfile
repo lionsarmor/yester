@@ -1,0 +1,40 @@
+# Keep GitHub Pages as the origin and redirect historical member URLs at the edge.
+http://yestersites.com {
+	handle /.well-known/acme-challenge/* {
+		root * /var/www/yestersites-acme
+		file_server
+	}
+	handle {
+		redir https://yestersites.com{uri} 301
+	}
+}
+
+(github_pages_origin) {
+	reverse_proxy https://lionsarmor.github.io {
+		header_up Host yestersites.com
+		header_up -Cookie
+		header_up -Authorization
+	}
+}
+
+# Internal static fallback for founder files requested by the member gateway.
+http://127.0.0.1:8138 {
+	bind 127.0.0.1
+	import github_pages_origin
+}
+
+https://yestersites.com {
+	tls /etc/caddy/yestersites-tls/fullchain.pem /etc/caddy/yestersites-tls/privkey.pem
+
+	@member {
+		path_regexp member ^/members/([a-z0-9]+(?:-[a-z0-9]+)*)(?:/(.*))?$
+		not path /members/index.html
+	}
+	map {query} {member_query} {
+		"" ""
+		default ?{query}
+	}
+	redir @member https://{re.member.1}.yestersites.com/{re.member.2}{member_query} 301
+
+	import github_pages_origin
+}
