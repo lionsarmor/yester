@@ -158,10 +158,11 @@ function Browser() {
   }, []);
   useEffect(() => {
     if (held) return;
-    if (isReading || !prefs.autoHide || panel || editor) {
+    if (isReading || panel || editor) {
       setVisible(true);
       return;
     }
+    if (!prefs.autoHide) return;
     const timer = setTimeout(() => setVisible(false), 6000);
     return () => clearTimeout(timer);
   }, [isReading, prefs.autoHide, panel, held, editor, activity]);
@@ -663,12 +664,14 @@ function Browser() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Address"
+                accessibilityHint={url}
                 style={[c.address, { overflow: "hidden", borderColor: p.edge }]}
                 onPress={typeAddress}
               >
                 {!prefs.contrast && <Art source={p.addressArt} />}
                 <Text
                   numberOfLines={1}
+                  ellipsizeMode="middle"
                   style={[
                     c.addrText,
                     { color: p.displayInk, marginHorizontal: 8 },
@@ -993,6 +996,7 @@ function Browser() {
               )}
               {panel === "Settings" && (
                 <Settings
+                  changeStartup={(resume) => lib.setStartup(resume, current)}
                   {...{ lib, p, section, preview, handle }}
                   choose={setPreview}
                   sectionTo={setSection}

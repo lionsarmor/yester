@@ -11,6 +11,7 @@ import { Art, frames, Key, Row, type Frame, type Palette } from "./chrome";
 import type { FrameAction } from "./frames";
 import type { useLibrary, Prefs } from "./useLibrary";
 import config from "../app.json";
+import { specimens } from "./specimens";
 const sections = [
   ["Frame cabinet", "settings"],
   ["Startup and editions", "address"],
@@ -32,6 +33,7 @@ type Props = {
   account: (path: string) => void;
   credit: () => void;
   handle: string;
+  changeStartup: (resume: boolean) => void;
 };
 export function Settings({
   lib,
@@ -44,6 +46,7 @@ export function Settings({
   account,
   credit,
   handle,
+  changeStartup,
 }: Props) {
   const wide = useWindowDimensions().width >= 700,
     prefs = lib.data.prefs;
@@ -161,7 +164,6 @@ export function Settings({
             )}
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {(Object.keys(frames) as Frame[]).map((name) => {
-                const f = frames[name];
                 return (
                   <Pressable
                     key={name}
@@ -176,24 +178,18 @@ export function Settings({
                     }}
                     style={{ width: "50%", padding: 4 }}
                   >
-                    <View
+                    <Image
+                      source={specimens[name]}
+                      resizeMode="stretch"
+                      accessible={false}
                       style={{
-                        height: 52,
-                        padding: 5,
-                        justifyContent: "center",
-                        overflow: "hidden",
+                        width: "100%",
+                        aspectRatio: 1.5,
                         borderWidth: 2,
                         borderColor:
                           name === (preview || prefs.frame) ? p.accent : p.edge,
                       }}
-                    >
-                      <Art source={f.housing} />
-                      <Image
-                        source={f.badge}
-                        resizeMode="contain"
-                        style={{ width: 42, height: 35 }}
-                      />
-                    </View>
+                    />
                     <Text style={{ color: p.ink, fontWeight: "bold" }}>
                       {name}
                       {name === prefs.frame ? " ✓" : ""}
@@ -208,12 +204,12 @@ export function Settings({
           <>
             {row(
               "Discover a random site",
-              () => lib.preference("resume", false),
+              () => changeStartup(false),
               !prefs.resume,
             )}
             {row(
               "Resume the last page",
-              () => lib.preference("resume", true),
+              () => changeStartup(true),
               prefs.resume,
               "Stores your last page on this device.",
             )}

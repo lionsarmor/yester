@@ -112,10 +112,18 @@ export function useLibrary() {
     data,
     ready,
     storageError,
-    preference: <K extends keyof Prefs>(k: K, value: Prefs[K]) =>
+    setStartup: (resume: boolean, current: Visit) =>
       update((d) => ({
         ...d,
-        last: k === "resume" && !value ? null : d.last,
+        prefs: { ...d.prefs, resume },
+        last: resume ? current : null,
+      })),
+    preference: <K extends Exclude<keyof Prefs, "resume">>(
+      k: K,
+      value: Prefs[K],
+    ) =>
+      update((d) => ({
+        ...d,
         prefs: { ...d.prefs, [k]: value },
       })),
     clearHistory: () => update((d) => ({ ...d, recent: [], last: null })),
