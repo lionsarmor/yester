@@ -15,7 +15,16 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import WebView, { type WebViewNavigation } from "react-native-webview";
 import * as Clipboard from "expo-clipboard";
-import { c, frames, Key, Row, type Frame } from "./src/chrome";
+import {
+  LibraryRecord,
+  Thumbnail,
+  Art,
+  c,
+  frames,
+  Key,
+  Row,
+  type Frame,
+} from "./src/chrome";
 import {
   directory,
   EDITOR,
@@ -28,6 +37,9 @@ import {
   type Site,
   type Visit,
 } from "./src/discovery";
+import { Settings } from "./src/Settings";
+import { nativeControls } from "./src/nativeControls";
+import type { FrameAction } from "./src/frames";
 import { Trail, type Entry } from "./src/trail";
 import { useLibrary } from "./src/useLibrary";
 
@@ -53,8 +65,20 @@ const editorForms = `if(location.origin === new URL(${JSON.stringify(EDITOR)}).o
 } true;`;
 function Browser() {
   const lib = useLibrary();
-  const prefs = lib.data.prefs,
-    p = frames[prefs.frame];
+  const prefs = lib.data.prefs;
+  const [preview, setPreview] = useState<Frame | null>(null),
+    [section, setSection] = useState("");
+  const [quiet, setQuiet] = useState(false),
+    [soundAvailable, setSoundAvailable] = useState(false);
+  const [handle, setHandle] = useState(""),
+    [started, setStarted] = useState(false);
+  const startedRef = useRef(false),
+    desiredMute = useRef(false),
+    audioRequest = useRef(0),
+    fallback = useRef("");
+  const [fullscreen, setFullscreen] = useState(false);
+  const [playFilter, setPlayFilter] = useState(false);
+
   const trail = useRef(new Trail()).current;
   const sequence = useRef(1),
     generation = useRef(1);
@@ -65,6 +89,23 @@ function Browser() {
   const [isReading, setIsReading] = useState(false);
   const [panel, setPanel] = useState<Panel | null>(null),
     [editor, setEditor] = useState(false);
+  const selectedFrame =
+    frames[
+      panel === "Settings" && section === "Frame cabinet" && preview
+        ? preview
+        : prefs.frame
+    ];
+  const p = prefs.contrast
+    ? {
+        ...selectedFrame,
+        ink: "#101010",
+        paper: "#ffffff",
+        surface: "#fff",
+        keyInks: ["#111", "#111", "#111", "#111"],
+        displayInk: "#111",
+        contrast: true,
+      }
+    : selectedFrame;
   const [address, setAddress] = useState(""),
     [query, setQuery] = useState(""),
     [notice, setNotice] = useState("");
@@ -95,12 +136,14 @@ function Browser() {
     });
   const active = trail.current;
   const source = React.useMemo(() => ({ uri: document.url }), [document]);
-  const editorSource = React.useMemo(() => ({ uri: EDITOR }), []);
+
   function wake() {
     setVisible(true);
     setActivity((n) => n + 1);
   }
   function show(which: Panel) {
+    setPreview(null);
+    setSection("");
     wake();
     setNotice("");
     setPanel(which);
@@ -166,7 +209,22 @@ function Browser() {
   useEffect(() => {
     if (suggestion) Image.prefetch(thumbnail(suggestion)).catch(() => {});
   }, [suggestion]);
+  async function configureAudio(mute: boolean) {
+    const req = ++audioRequest.current,
+      key = generation.current;
+    desiredMute.current = mute;
+    const ok = await nativeControls
+      ?.configure(mute, prefs.tapForSound)
+      .catch(() => false);
+    if (key !== generation.current || req !== audioRequest.current) return;
+    setSoundAvailable(!!ok);
+    setQuiet(!!ok && mute);
+  }
   function mountPage(entry: Entry) {
+    desiredMute.current = prefs.quiet;
+    setQuiet(false);
+    setSoundAvailable(false);
+    setFullscreen(false);
     generation.current++;
     first.current = true;
     setEditor(false);
@@ -179,6 +237,7 @@ function Browser() {
     wake();
   }
   function visit(href: string, title?: string, member?: string | null) {
+    fallback.current = "";
     const target = webURL(href);
     if (!target) return;
     const entry = {
@@ -191,6 +250,44 @@ function Browser() {
     trail.push(entry);
     mountPage(entry);
   }
+  function openMember(site: Site) {
+    const home = homepage(site);
+    visit(prefs.textEdition ? home + "text.html" : home, site.title, site.slug);
+    fallback.current = prefs.textEdition ? home : "";
+  }
+  useEffect(() => {
+    if (!lib.ready || startedRef.current) return;
+    function start(site?: Site) {
+      if (startedRef.current) return;
+      startedRef.current = true;
+      const previous = prefs.resume ? lib.data.last : null;
+      const home = site ? homepage(site) : starter;
+      const target = previous || {
+        url: prefs.textEdition ? home + "text.html" : home,
+        title: site?.title || "Quarter Moon Arcade",
+        member: memberOf(home),
+      };
+      trail.entries = [];
+      trail.index = -1;
+      const entry = { ...target, session: ++sequence.current };
+      trail.push(entry);
+      anchor.current = entry.member;
+      mountPage(entry);
+      fallback.current = !previous && prefs.textEdition ? home : "";
+      setVisible(!prefs.folded);
+      setStarted(true);
+    }
+    if (prefs.resume && lib.data.last) {
+      start();
+      return;
+    }
+    if (sites.length) {
+      start(nextSite(sites, prefs.mode, null, new Set()));
+      return;
+    }
+    const timer = setTimeout(() => start(), 4500);
+    return () => clearTimeout(timer);
+  }, [lib.ready, sites]);
   function discover(mode: Mode = prefs.mode) {
     const history = seen.current[mode];
     if (anchor.current) history.add(anchor.current);
@@ -203,7 +300,7 @@ function Browser() {
     }
     history.add(site.slug);
     lib.preference("mode", mode);
-    visit(homepage(site), site.title, site.slug);
+    openMember(site);
   }
   function travel(direction: -1 | 1) {
     const previous = trail.current,
@@ -251,8 +348,18 @@ function Browser() {
     mountPage(trail.current);
   }
   function back() {
+    if (panel === "Settings" && section) {
+      setSection("");
+      setPreview(null);
+      return true;
+    }
     if (panel) {
       setPanel(null);
+      wake();
+      return true;
+    }
+    if (fullscreen) {
+      setFullscreen(false);
       wake();
       return true;
     }
@@ -271,11 +378,13 @@ function Browser() {
     const sub = BackHandler.addEventListener("hardwareBackPress", back);
     return () => sub.remove();
   });
-  function create() {
+  function create(startUrl: string = EDITOR) {
+    desiredMute.current = false;
+    setFullscreen(false);
     generation.current++;
-    setDocument({ key: generation.current, url: EDITOR });
+    setDocument({ key: generation.current, url: startUrl });
     setEditor(true);
-    setUrl(EDITOR);
+    setUrl(startUrl);
     setNative({ back: false, forward: false });
     setBusy(true);
     setError("");
@@ -292,6 +401,16 @@ function Browser() {
       );
     } else visit(href);
   }
+  useEffect(() => {
+    const listener = nativeControls?.addListener("shortcut", ({ action }) => {
+      if (action === "address") typeAddress();
+      else if (!panel) {
+        if (action === "back") back();
+        else if (action === "forward") travel(1);
+      }
+    });
+    return () => listener?.remove();
+  });
   function typeAddress() {
     setAddress(url);
     show("Address");
@@ -306,6 +425,7 @@ function Browser() {
     action: () => void,
     detail?: string,
     selected = false,
+    icon?: FrameAction,
   ) => (
     <Row
       key={label}
@@ -313,10 +433,19 @@ function Browser() {
       label={label}
       detail={detail}
       selected={selected}
+      action={icon}
       onPress={action}
     />
   );
   const records = recentTab ? lib.data.recent : lib.data.marks;
+  const results = sites.filter(
+    (site) =>
+      (!playFilter || site.playable) &&
+      [site.title, site.slug, ...site.categories, ...site.tags]
+        .join(" ")
+        .toLowerCase()
+        .includes(query.trim().toLowerCase()),
+  );
   const current: Visit = {
     url,
     title: active.url === url ? active.title : new URL(url).hostname,
@@ -334,55 +463,98 @@ function Browser() {
           setActivity((n) => n + 1);
         }}
       >
-        <WebView<object>
-          key={document.key}
-          ref={view}
-          source={editor ? editorSource : source}
-          style={{ flex: 1 }}
-          allowsInlineMediaPlayback
-          allowsFullscreenVideo
-          mediaPlaybackRequiresUserAction={prefs.tapForSound}
-          allowFileAccess={false}
-          mixedContentMode="never"
-          originWhitelist={["*"]}
-          injectedJavaScript={editor ? editorForms : undefined}
-          onShouldStartLoadWithRequest={(req) => {
-            if (req.url === "about:blank") return true;
-            const target = webURL(req.url);
-            if (!target) return false;
-            if (
-              editor &&
-              req.isTopFrame &&
-              ![
-                new URL(EDITOR).origin,
-                SERVICE,
-                "https://yestersites.com",
-              ].includes(new URL(target).origin)
-            ) {
-              visit(target);
-              return false;
+        {started && (
+          <WebView<object>
+            key={document.key}
+            ref={view}
+            source={source}
+            style={{ flex: 1 }}
+            allowsInlineMediaPlayback
+            allowsFullscreenVideo
+            mediaPlaybackRequiresUserAction={prefs.tapForSound}
+            allowFileAccess={false}
+            mixedContentMode="never"
+            originWhitelist={["*"]}
+            injectedJavaScript={
+              editor
+                ? editorForms +
+                  ";if(location.origin===" +
+                  JSON.stringify(SERVICE) +
+                  "){if(location.pathname==='/account/' || location.pathname==='/signin/')window.ReactNativeWebView.postMessage(JSON.stringify({handle:document.querySelector('p b')?.textContent||''}));}true;"
+                : undefined
             }
-            return true;
-          }}
-          onOpenWindow={(e) => {
-            const href = webURL(e.nativeEvent.targetUrl);
-            if (href) routePopup(href);
-          }}
-          onNavigationStateChange={(n) => nav(n, document.key)}
-          onLoadStart={() => {
-            if (document.key === generation.current) {
-              setBusy(true);
-              setError("");
+            onMessage={
+              editor
+                ? (e) => {
+                    if (
+                      webURL(e.nativeEvent.url) &&
+                      new URL(e.nativeEvent.url).origin === SERVICE
+                    ) {
+                      try {
+                        const h = JSON.parse(e.nativeEvent.data).handle;
+                        if (
+                          typeof h === "string" &&
+                          /^[a-z0-9_-]{0,40}$/i.test(h)
+                        )
+                          setHandle(h);
+                      } catch {}
+                    }
+                  }
+                : undefined
             }
-          }}
-          onLoadEnd={() => {
-            if (document.key === generation.current) setBusy(false);
-          }}
-          onError={(e) => {
-            if (document.key === generation.current)
-              setError(e.nativeEvent.description || "Connection failed");
-          }}
-        />
+            onHttpError={(e) => {
+              if (
+                fallback.current &&
+                e.nativeEvent.url === source.uri &&
+                e.nativeEvent.statusCode >= 400
+              ) {
+                const home = fallback.current;
+                visit(home);
+              }
+            }}
+
+            onShouldStartLoadWithRequest={(req) => {
+              if (req.url === "about:blank") return true;
+              const target = webURL(req.url);
+              if (!target) return false;
+              if (
+                editor &&
+                req.isTopFrame &&
+                ![
+                  new URL(EDITOR).origin,
+                  SERVICE,
+                  "https://yestersites.com",
+                ].includes(new URL(target).origin)
+              ) {
+                visit(target);
+                return false;
+              }
+              return true;
+            }}
+            onOpenWindow={(e) => {
+              const href = webURL(e.nativeEvent.targetUrl);
+              if (href) routePopup(href);
+            }}
+            onNavigationStateChange={(n) => nav(n, document.key)}
+            onLoadStart={() => {
+              if (document.key === generation.current) {
+                setBusy(true);
+                setError("");
+                void configureAudio(desiredMute.current);
+              }
+            }}
+            onLoadEnd={() => {
+              if (document.key === generation.current) {
+                setBusy(false);
+                void configureAudio(desiredMute.current);
+              }
+            }}
+            onError={(e) => {
+              if (document.key === generation.current)
+                setError(e.nativeEvent.description || "Connection failed");
+            }}
+          />
+        )}
         {!!error && (
           <View
             style={[
@@ -413,11 +585,17 @@ function Browser() {
         }}
         onTouchCancel={() => setHeld(false)}
       >
+        <Art source={p.housing} />
         <View
           accessible
           accessibilityRole="button"
-          accessibilityLabel="Browser grip. Show controls or swipe up for next site"
+          accessibilityLabel={
+            fullscreen
+              ? "Exit fullscreen"
+              : "Browser grip. Show controls or swipe up for next site"
+          }
           onAccessibilityTap={() => {
+            setFullscreen(false);
             wake();
           }}
           style={c.grip}
@@ -429,34 +607,73 @@ function Browser() {
           onResponderRelease={(e) => {
             setHeld(false);
             if (gripY.current - e.nativeEvent.pageY > 32) {
-              if (!editor) discover();
+              if (!editor && prefs.gestures) discover();
             } else {
-              setVisible(!visible);
+              if (fullscreen) {
+                setFullscreen(false);
+                setVisible(true);
+              } else setVisible(!visible);
               setActivity((n) => n + 1);
             }
           }}
           onResponderTerminate={() => setHeld(false)}
         >
-          <View
-            style={[
-              c.ridge,
-              { borderTopColor: p.edge, borderBottomColor: p.light },
-            ]}
+          {fullscreen && (
+            <Image
+              source={p.icons.exitFullscreen}
+              style={{ width: 18, height: 18, position: "absolute", right: 10 }}
+            />
+          )}
+          <Image
+            source={p.gripArt}
+            resizeMode="stretch"
+            style={{ width: 85, height: 13 }}
           />
         </View>
-        {visible && (
+        {visible && !fullscreen && (
           <>
             <View style={c.strip}>
               <View style={[c.brandBox, { backgroundColor: p.dark }]}>
+                {p.name === "County Dialer" && (
+                  <View
+                    accessible
+                    accessibilityLabel={
+                      busy ? "Exchange connecting" : "Line ready"
+                    }
+                    style={{
+                      position: "absolute",
+                      right: 3,
+                      top: 3,
+                      width: 9,
+                      height: 9,
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: "#2a2c1b",
+                      backgroundColor: busy ? "#ffc856" : "#8ae676",
+                    }}
+                  />
+                )}
+                <Image
+                  source={p.badge}
+                  style={{ width: 20, height: 20 }}
+                  resizeMode="contain"
+                />
                 <Text style={c.brand}>{editor ? "CREATE" : "YESTER"}</Text>
               </View>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Address"
-                style={c.address}
+                style={[c.address, { overflow: "hidden", borderColor: p.edge }]}
                 onPress={typeAddress}
               >
-                <Text numberOfLines={1} style={c.addrText}>
+                {!prefs.contrast && <Art source={p.addressArt} />}
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    c.addrText,
+                    { color: p.displayInk, marginHorizontal: 8 },
+                  ]}
+                >
                   {new URL(url).protocol === "http:" ? "http://" : ""}
                   {new URL(url).host}
                 </Text>
@@ -488,7 +705,12 @@ function Browser() {
                   wake();
                 }}
               />
-              <Key p={p} label="Menu" glyph="☰" onPress={() => show("Menu")} />
+              <Key
+                p={p}
+                label="Tools"
+                glyph="☰"
+                onPress={() => show("Menu")}
+              />
             </View>
           </>
         )}
@@ -510,8 +732,13 @@ function Browser() {
             ]}
           >
             <View style={[c.head, { backgroundColor: p.dark }]}>
-              <Text style={c.title}>
-                {panel === "Menu" ? "YESTER by RODDY" : panel}
+              <Image
+                source={p.badge}
+                style={{ width: 28, height: 28 }}
+                resizeMode="contain"
+              />
+              <Text style={[c.title, { flex: 1, marginLeft: 8 }]}>
+                {panel === "Menu" ? "YESTER tools" : panel}
               </Text>
               <Pressable
                 accessibilityRole="button"
@@ -529,29 +756,81 @@ function Browser() {
               {panel === "Menu" && (
                 <>
                   {row(
-                    saved ? "Remove bookmark" : "Save page",
+                    saved ? "Saved · Remove bookmark" : "Save page",
                     () => {
                       lib.bookmark(current);
                       show("Library");
                       setRecentTab(false);
                     },
                     current.title,
+                    saved,
+                    saved ? "saved" : "save",
                   )}
-                  {row("Share", () => {
-                    void Share.share({
-                      message: url,
-                      url,
-                      title: current.title,
-                    }).catch(() => setNotice("Sharing unavailable."));
-                  })}
-                  {row("Library", () => show("Library"))}
+                  {row(
+                    Platform.OS === "ios"
+                      ? quiet
+                        ? "Resume site media"
+                        : "Suspend site media"
+                      : quiet
+                        ? "Unmute site"
+                        : "Mute site",
+                    () => {
+                      if (soundAvailable) void configureAudio(!quiet);
+                      else
+                        setNotice(
+                          "This system WebView does not support site-wide sound control. Use the player or update Android System WebView.",
+                        );
+                    },
+                    soundAvailable ? undefined : "System support unavailable",
+                    quiet,
+                    quiet ? "muted" : "sound",
+                  )}
+                  {row(
+                    fullscreen ? "Exit fullscreen" : "Fullscreen",
+                    () => {
+                      setFullscreen(!fullscreen);
+                      setVisible(fullscreen);
+                      setPanel(null);
+                    },
+                    "Tap the grip for controls.",
+                    fullscreen,
+                    fullscreen ? "exitFullscreen" : "fullscreen",
+                  )}
+                  {row(
+                    "Share",
+                    () => {
+                      void Share.share({
+                        message: url,
+                        url,
+                        title: current.title,
+                      }).catch(() => setNotice("Sharing unavailable."));
+                    },
+                    undefined,
+                    false,
+                    "share",
+                  )}
+                  {row(
+                    "Library",
+                    () => show("Library"),
+                    undefined,
+                    false,
+                    "library",
+                  )}
                   {row(
                     "Discover",
                     () => show("Discover"),
                     suggestion ? "Up next · " + suggestion.title : undefined,
+                    false,
+                    "discover",
                   )}
-                  {row("Create", create, "Open Retro Page")}
-                  {row("Settings", () => show("Settings"))}
+
+                  {row(
+                    "Settings",
+                    () => show("Settings"),
+                    undefined,
+                    false,
+                    "settings",
+                  )}
                   <Pressable
                     accessibilityLabel="RODDY homepage"
                     onPress={() => visit("https://roddy.world/", "RODDY")}
@@ -603,10 +882,10 @@ function Browser() {
                         backgroundColor: p.dark,
                       }}
                     >
-                      <Image
-                        source={{ uri: thumbnail(suggestion) }}
-                        resizeMode="contain"
-                        style={{ width: 54, height: 44 }}
+                      <Thumbnail
+                        key={suggestion.slug}
+                        p={p}
+                        uri={thumbnail(suggestion)}
                       />
                       <View style={{ flex: 1 }}>
                         <Text style={{ color: "#fff5dd", fontSize: 12 }}>
@@ -636,24 +915,33 @@ function Browser() {
                     value={query}
                     onChangeText={setQuery}
                   />
+                  {row(
+                    "Playable only",
+                    () => setPlayFilter(!playFilter),
+                    undefined,
+                    playFilter,
+                    "discover",
+                  )}
                   {!!catalogState &&
                     row(catalogState, () => setRefresh((n) => n + 1))}
-                  {sites
-                    .filter((s) =>
-                      [s.title, s.slug, ...s.categories, ...s.tags]
-                        .join(" ")
-                        .toLowerCase()
-                        .includes(query.trim().toLowerCase()),
-                    )
-                    .map((s) => (
-                      <Row
-                        key={s.slug}
-                        p={p}
-                        label={s.title}
-                        detail={s.slug + ".yestersites.com"}
-                        onPress={() => visit(homepage(s), s.title, s.slug)}
-                      />
-                    ))}
+                  {!catalogState && !results.length && (
+                    <Text
+                      accessibilityLiveRegion="polite"
+                      style={{ padding: 12, color: p.ink }}
+                    >
+                      No listed sites match. Try another subject or turn off the
+                      playable filter.
+                    </Text>
+                  )}
+                  {results.map((s) => (
+                    <Row
+                      key={s.slug}
+                      p={p}
+                      label={s.title}
+                      detail={s.slug + ".yestersites.com"}
+                      onPress={() => openMember(s)}
+                    />
+                  ))}
                   {row("Open Grub", () =>
                     visit(
                       "https://yestersites.com/crawler/?q=" +
@@ -673,7 +961,7 @@ function Browser() {
                     />
                     <Key
                       p={p}
-                      label="Recent"
+                      label="Travel log"
                       onPress={() => setRecentTab(true)}
                     />
                   </View>
@@ -684,40 +972,34 @@ function Browser() {
                         : "Your saved pages appear here."}
                     </Text>
                   )}
-                  {records.map((r) => (
-                    <Row
-                      key={r.url}
-                      p={p}
-                      label={r.title}
-                      detail={r.url}
-                      onPress={() => visit(r.url, r.title, r.member)}
-                    />
-                  ))}
+                  {records.map((r, index) => {
+                    const site = sites.find(
+                      (s) =>
+                        new URL(r.url).hostname === s.slug + ".yestersites.com",
+                    );
+                    return (
+                      <LibraryRecord
+                        key={r.url}
+                        p={p}
+                        index={index}
+                        title={r.title}
+                        url={r.url}
+                        thumbnail={site ? thumbnail(site) : undefined}
+                        onPress={() => visit(r.url, r.title, r.member)}
+                      />
+                    );
+                  })}
                 </>
               )}
               {panel === "Settings" && (
-                <>
-                  {(Object.keys(frames) as Frame[]).map((f) =>
-                    row(
-                      f,
-                      () => lib.preference("frame", f),
-                      "Browser frame",
-                      prefs.frame === f,
-                    ),
-                  )}
-                  {row(
-                    "Hide controls after six seconds",
-                    () => lib.preference("autoHide", !prefs.autoHide),
-                    undefined,
-                    prefs.autoHide,
-                  )}
-                  {row(
-                    "Tap to start sound",
-                    () => lib.preference("tapForSound", !prefs.tapForSound),
-                    "Websites may still require a tap.",
-                    prefs.tapForSound,
-                  )}
-                </>
+                <Settings
+                  {...{ lib, p, section, preview, handle }}
+                  choose={setPreview}
+                  sectionTo={setSection}
+                  create={() => create()}
+                  account={(path) => create(SERVICE + path)}
+                  credit={() => visit("https://roddy.world/", "RODDY")}
+                />
               )}
               {(notice || lib.storageError) && (
                 <Text style={{ padding: 9, color: p.ink }}>

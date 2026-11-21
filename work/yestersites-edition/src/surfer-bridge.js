@@ -12,7 +12,7 @@
     const localMember=target.origin===location.origin && target.pathname.startsWith('/members/');
     const sub=/^([a-z0-9-]{1,40})\.yestersites\.com$/.exec(target.hostname);
     const publicMember=target.protocol==='https:' && !target.port && !target.username && !target.password && sub &&
-      !['www','retropage','mail','smtp','pop','imap','ftp','api','admin','accounts','studio','assets','ns1','ns2'].includes(sub[1]);
+      !['www','android','retropage','mail','smtp','pop','imap','ftp','api','admin','accounts','studio','assets','ns1','ns2'].includes(sub[1]);
     if(!localMember && !publicMember){
       if(['http:','https:'].includes(target.protocol)){a.target='_blank';a.rel='noopener';}
       return;

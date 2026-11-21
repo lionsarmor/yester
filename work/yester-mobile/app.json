@@ -2,7 +2,7 @@
   "expo": {
     "name": "YESTER",
     "slug": "yester-by-roddy",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "ios": {
@@ -10,15 +10,19 @@
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "package": "world.roddy.yester",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive.png",
         "backgroundColor": "#20463f"
-      }
+      },
+      "versionCode": 2
     },
-    "plugins": ["./plugins/browser-transport.cjs"]
+    "plugins": [
+      "./plugins/browser-transport.cjs"
+    ]
   }
 }

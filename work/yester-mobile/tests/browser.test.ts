@@ -14,6 +14,7 @@ test("ring navigation keeps the member anchor across an outside page and wraps",
   assert.equal(nextSite(pool, "Ring", "radio", new Set())?.slug, "arcade");
   assert.equal(memberOf("https://arcade.yestersites.com/room?a=1"), "arcade");
   assert.equal(memberOf("https://elsewhere.com/room"), null);
+  assert.equal(memberOf("https://android.yestersites.com/"), null);
 });
 test("shuffle exhausts the pool before cycling and playable mode filters it", () => {
   const seen = new Set(["bee", "radio"]);

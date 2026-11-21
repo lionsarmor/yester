@@ -1,0 +1,7 @@
+# Include beside apex.Caddyfile. Serve the product preview from GitHub Pages.
+android.yestersites.com {
+	rewrite * /android{uri}
+	reverse_proxy 127.0.0.1:8138 {
+		header_up Host 127.0.0.1:8138
+	}
+}

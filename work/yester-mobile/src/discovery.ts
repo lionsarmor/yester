@@ -35,7 +35,15 @@ export function memberOf(url: string): string | null {
     return u.pathname.match(/^\/members\/([a-z0-9-]+)(?:\/|$)/)?.[1] ?? null;
   const slug = /^([a-z0-9-]+)\.yestersites\.com$/.exec(u.hostname)?.[1];
   return slug &&
-    !["retropage", "www", "api", "assets", "accounts", "studio"].includes(slug)
+    ![
+      "android",
+      "retropage",
+      "www",
+      "api",
+      "assets",
+      "accounts",
+      "studio",
+    ].includes(slug)
     ? slug
     : null;
 }

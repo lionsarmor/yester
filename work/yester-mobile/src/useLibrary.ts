@@ -2,18 +2,38 @@ import { useEffect, useRef, useState } from "react";
 import Storage from "@react-native-async-storage/async-storage";
 import { webURL, type Visit, type Mode } from "./discovery";
 import { frames, type Frame } from "./chrome";
-type Prefs = {
+export type Prefs = {
   frame: Frame;
+  resume: boolean;
+  textEdition: boolean;
+  gestures: boolean;
+  folded: boolean;
+  quiet: boolean;
+  log: boolean;
+  contrast: boolean;
   autoHide: boolean;
   tapForSound: boolean;
   mode: Mode;
 };
-type Data = { marks: Visit[]; recent: Visit[]; prefs: Prefs };
+type Data = {
+  marks: Visit[];
+  recent: Visit[];
+  prefs: Prefs;
+  last: Visit | null;
+};
 const empty: Data = {
+  last: null,
   marks: [],
   recent: [],
   prefs: {
-    frame: "Switchboard",
+    frame: "DeskSet 3.2",
+    resume: false,
+    textEdition: false,
+    gestures: true,
+    folded: false,
+    quiet: false,
+    log: true,
+    contrast: false,
     autoHide: true,
     tapForSound: true,
     mode: "Shuffle",
@@ -49,12 +69,20 @@ export function useLibrary() {
         const v = JSON.parse(text),
           p = v.prefs || {};
         update({
+          last: visits([v.last])[0] || null,
           marks: visits(v.marks),
           recent: visits(v.recent),
           prefs: {
             frame: Object.prototype.hasOwnProperty.call(frames, p.frame)
               ? p.frame
-              : "Switchboard",
+              : "DeskSet 3.2",
+            resume: p.resume === true,
+            textEdition: p.textEdition === true,
+            gestures: p.gestures !== false,
+            folded: p.folded === true,
+            quiet: p.quiet === true,
+            log: p.log !== false,
+            contrast: p.contrast === true,
             autoHide: p.autoHide !== false,
             tapForSound: p.tapForSound !== false,
             mode: ["Shuffle", "Play", "Ring"].includes(p.mode)
@@ -85,19 +113,22 @@ export function useLibrary() {
     ready,
     storageError,
     preference: <K extends keyof Prefs>(k: K, value: Prefs[K]) =>
-      update((d) => ({ ...d, prefs: { ...d.prefs, [k]: value } })),
+      update((d) => ({
+        ...d,
+        last: k === "resume" && !value ? null : d.last,
+        prefs: { ...d.prefs, [k]: value },
+      })),
+    clearHistory: () => update((d) => ({ ...d, recent: [], last: null })),
     recent: (v: Visit) =>
-      update((d) =>
-        d.recent[0]?.url === v.url && d.recent[0]?.title === v.title
-          ? d
-          : {
-              ...d,
-              recent: [v, ...d.recent.filter((r) => r.url !== v.url)].slice(
-                0,
-                150,
-              ),
-            },
-      ),
+      update((d) => {
+        const last = d.prefs.resume ? v : null;
+        if (!d.prefs.log) return last === d.last ? d : { ...d, last };
+        return {
+          ...d,
+          last,
+          recent: [v, ...d.recent.filter((r) => r.url !== v.url)].slice(0, 150),
+        };
+      }),
     bookmark: (v: Visit) =>
       update((d) => ({
         ...d,

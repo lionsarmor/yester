@@ -286,7 +286,7 @@ function safeReturnTo(value) {
   if (t.origin!=="https://site.invalid" || ["/signin-with-chatgpt","/signout-with-chatgpt","/callback","/api/login"].includes(t.pathname)) return "/studio/";
   return t.pathname+t.search+t.hash;
 }
-const reservedHosts=new Set('www retropage mail smtp pop imap ftp api admin accounts studio assets ns1 ns2'.split(' '));
+const reservedHosts=new Set('www android retropage mail smtp pop imap ftp api admin accounts studio assets ns1 ns2'.split(' '));
 const assignedUrl=slug=>'https://'+slug+'.yestersites.com/';
 let memberDNSReady=false, memberProbe, probeAgain=0;
 async function checkMemberDNS(){

@@ -1,6 +1,6 @@
 # YESTER by RODDY
 
-A phone browser for YesterSites. Launch into Quarter Moon Arcade, follow a link, save the exact page, or swipe up from the bottom grip to discover another member. The address field opens the full URL. Tap the grip to bring back the controls.
+A phone browser for YesterSites. Discover a listed member homepage, follow a link, save the exact page, or swipe up from the bottom grip to discover another member. The address field opens the full URL. Tap the grip to bring back the controls.
 
 ## Run the app
 
@@ -11,9 +11,13 @@ Install Node 24 and the dependencies with `npm ci`. The app uses Expo SDK 58, Re
 - **Native development builds.** Run `npm run android` or, on a Mac, `npm run ios`. These commands generate the native project and install YESTER on the selected device. Expo Go is useful for checking interaction before building a standalone binary.
 - **Checks.** Run `npm test`, `npm run typecheck`, and `npx expo export --platform all` to exercise the browser logic and compile both bundles.
 
+## Frame cabinet
+
+Tools → Settings → Frame cabinet lets you try fourteen browser frames using the approved artwork. Apply a frame to keep it on this device. Use a native build to test per-site media controls. Expo Go lacks the YESTER native module. [Try the interactive Android preview](https://android.yestersites.com/).
+
 ## Live integrations
 
-Discover uses the public Grub directory and its playable filter. Ring follows published member slugs in order. An outside link retains the originating member for ring navigation. Bookmarks, recent pages and settings live on the device. Create opens the production Retro Page editor for its regular account, project and publishing flows. Bookmarks can include outside pages. Games and videos use their site's own controls and the device WebView's fullscreen support.
+Discover uses the public Grub directory and its playable filter. Ring follows published member slugs in order. An outside link retains the originating member for ring navigation. Bookmarks, recent pages and settings live on the device. Settings → Creator tools opens the production Retro Page editor for its regular account, project and publishing flows. Bookmarks can include outside pages. Games and videos use their site's own controls and the device WebView's fullscreen support.
 
 ## Device acceptance trip
 
@@ -21,14 +25,14 @@ Discover uses the public Grub directory and its playable filter. Ring follows pu
 2. Open an outside page, then use Back, Forward and Android system Back. Confirm the address field shows the full path of each page.
 3. Save an interior page, share it, kill and reopen the app, then return through Library. Compare the exact URL.
 4. Start audio. Swipe up on the grip. Confirm silence from the old page and that swiping within a game or diary stays on that site.
-5. Switch to Play and Ring. Open Create, sign into a test account and publish an edit to an owned test site. Reopen its public URL in YESTER.
+5. Switch to Play and Ring. Open Settings → Creator tools → Make your own site, sign into a test account and publish an edit to an owned test site. Reopen its public URL in YESTER.
 6. Repeat on an iPhone and Android phone with a physical controller for simultaneous input, pairing and media interruptions.
 
 ## Android tablet preview
 
 The standalone preview APK includes the JavaScript bundle and browser controls. Copy the APK to the tablet and open it from Files. If Android asks, allow that file manager to install this app. The published member sites, Grub and Retro Page require an internet connection. A running Metro server and an Expo account are unnecessary for the standalone build.
 
-## Android verification
+## Previous Android 0.1 verification
 
 On the Pixel 6 virtual device running Android 15, YESTER opened the live Quarter Moon Arcade homepage and its Pond Post game room. The game entered native fullscreen and Android Back returned to the same room. An outside address opened inside YESTER. System Back and Forward traversed the room and outside page, Next discovered another member, Library retained the full game-room URL, and Create opened the production Retro Page editor. A grip swipe replaced the game WebView with one serving Switchboard Radio.
 

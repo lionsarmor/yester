@@ -3,7 +3,7 @@ import {Readable} from 'node:stream';
 const apex='https://yestersites.com',service='https://yestersites-webring.jamesmweeksjr.chatgpt.site';
 const pagesOrigin='http://127.0.0.1:8138';
 const siteLabel=/^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const reserved=new Set('www retropage mail smtp pop imap ftp api admin accounts studio assets ns1 ns2'.split(' '));
+const reserved=new Set('www android retropage mail smtp pop imap ftp api admin accounts studio assets ns1 ns2'.split(' '));
 export function tenant(host){
   const match=/^([a-z0-9-]{1,40})\.yestersites\.com$/.exec(host);
   return match && siteLabel.test(match[1]) && !reserved.has(match[1])?match[1]:null;

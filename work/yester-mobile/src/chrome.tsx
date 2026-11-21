@@ -1,37 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-export const frames = {
-  Switchboard: {
-    surface: "#e5e0ce",
-    light: "#fffef1",
-    edge: "#766f60",
-    dark: "#24493f",
-    ink: "#20251f",
-    paper: "#fffdf1",
-  },
-  "After Hours": {
-    surface: "#393541",
-    light: "#696274",
-    edge: "#17151b",
-    dark: "#4f3853",
-    ink: "#fff0d6",
-    paper: "#25222b",
-  },
-} as const;
-export type Frame = keyof typeof frames;
-export type Palette = (typeof frames)[Frame];
-const icons: Record<string, number> = {
-  Back: require("../assets/back.png"),
-  Forward: require("../assets/next.png"),
-  Next: require("../assets/next.png"),
-  Browse: require("../assets/next.png"),
-  Stop: require("../assets/stop.png"),
-  Reload: require("../assets/reload.png"),
-  Menu: require("../assets/menu.png"),
+import { frames, type Frame, type Palette, type FrameAction } from "./frames";
+export { frames, type Frame, type Palette };
+export function Art({
+  source,
+  stretch = true,
+}: {
+  source: number;
+  stretch?: boolean;
+}) {
+  return (
+    <View
+      pointerEvents="none"
+      accessible={false}
+      style={StyleSheet.absoluteFill}
+    >
+      <Image
+        accessible={false}
+        source={source}
+        resizeMode={stretch ? "stretch" : "cover"}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </View>
+  );
+}
+const keyActions: Record<string, FrameAction> = {
+  Back: "back",
+  Forward: "forward",
+  Next: "next",
+  Browse: "discover",
+  Stop: "stop",
+  Reload: "reload",
+  Tools: "tools",
 };
 export function Key({
   label,
-  glyph,
   onPress,
   disabled = false,
   p,
@@ -42,6 +45,16 @@ export function Key({
   disabled?: boolean;
   p: Palette;
 }) {
+  const [focus, setFocus] = useState(false),
+    action = keyActions[label];
+  const slot =
+    label === "Back"
+      ? 0
+      : ["Forward", "Next", "Browse"].includes(label)
+        ? 1
+        : ["Reload", "Stop"].includes(label)
+          ? 2
+          : 3;
   return (
     <Pressable
       accessibilityRole="button"
@@ -49,32 +62,48 @@ export function Key({
       disabled={disabled}
       accessibilityState={{ disabled }}
       onPress={onPress}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
       style={({ pressed }) => [
         c.key,
         {
+          overflow: "hidden",
           backgroundColor: p.surface,
-          borderTopColor: pressed ? p.edge : p.light,
-          borderLeftColor: pressed ? p.edge : p.light,
-          borderRightColor: p.edge,
-          borderBottomColor: p.edge,
-          opacity: disabled ? 0.45 : 1,
+          borderRadius: p.radius,
+          borderColor: focus ? p.accent : p.edge,
+          opacity: disabled ? 0.5 : 1,
+          transform: [{ translateY: pressed ? 2 : 0 }],
         },
       ]}
     >
-      {icons[label] ? (
-        <Image
-          source={icons[label]}
-          resizeMode="contain"
-          style={{ width: 22, height: 22 }}
-        />
-      ) : (
-        glyph && (
-          <Text allowFontScaling={false} style={[c.glyph, { color: p.ink }]}>
-            {glyph}
+      {({ pressed }) => (
+        <>
+          {!("contrast" in p) && <Art source={p.keyFaces[slot]} />}
+          {action && (
+            <Image
+              source={p.icons[action]}
+              resizeMode="contain"
+              style={{ width: 23, height: 23 }}
+            />
+          )}
+          <Text
+            numberOfLines={2}
+            style={{
+              fontWeight: "bold",
+              fontSize: 13,
+              color: p.keyInks[slot],
+              textAlign: "center",
+            }}
+          >
+            {label}
           </Text>
-        )
+          {pressed && (
+            <View
+              style={[StyleSheet.absoluteFill, { backgroundColor: "#0002" }]}
+            />
+          )}
+        </>
       )}
-      <Text style={[c.keyLabel, { color: p.ink }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -84,37 +113,139 @@ export function Row({
   onPress,
   p,
   selected = false,
+  action,
 }: {
   label: string;
   detail?: string;
   onPress: () => void;
   p: Palette;
   selected?: boolean;
+  action?: FrameAction;
 }) {
+  const [focused, setFocus] = useState(false);
   return (
     <Pressable
-      accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={detail}
       accessibilityState={{ selected }}
+      accessibilityRole="button"
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
       onPress={onPress}
       style={({ pressed }) => [
         c.row,
         {
-          backgroundColor: pressed ? p.surface : p.paper,
+          backgroundColor: pressed || focused ? p.surface : p.paper,
           borderBottomColor: p.edge,
         },
       ]}
     >
+      {action && (
+        <Image
+          source={
+            action === "creator"
+              ? require("../assets/pencil.png")
+              : p.icons[action]
+          }
+          resizeMode="contain"
+          style={{ width: 28, height: 28 }}
+        />
+      )}
       <View style={{ flex: 1 }}>
         <Text style={[c.rowLabel, { color: p.ink }]}>{label}</Text>
         {!!detail && (
-          <Text numberOfLines={2} style={{ color: p.ink, fontSize: 13 }}>
-            {detail}
-          </Text>
+          <Text style={{ fontSize: 13, color: p.ink }}>{detail}</Text>
         )}
       </View>
-      <Text style={{ color: p.ink, fontSize: 18 }}>{selected ? "✓" : "›"}</Text>
+      <Text style={{ color: p.ink }}>{selected ? "✓" : "›"}</Text>
+    </Pressable>
+  );
+}
+export function Thumbnail({ uri, p }: { uri?: string; p: Palette }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <View
+      style={{
+        width: 56,
+        height: 43,
+        justifyContent: "center",
+        alignItems: "center",
+        borderWidth: 2,
+        borderColor: p.edge,
+        backgroundColor: p.dark,
+      }}
+    >
+      {uri && !failed ? (
+        <Image
+          source={{ uri }}
+          onError={() => setFailed(true)}
+          resizeMode="contain"
+          style={{ width: 48, height: 35 }}
+        />
+      ) : (
+        <Image
+          accessible
+          accessibilityLabel="No thumbnail"
+          source={p.icons.library}
+          resizeMode="contain"
+          style={{ width: 24, height: 22 }}
+        />
+      )}
+    </View>
+  );
+}
+export function LibraryRecord({
+  p,
+  index,
+  title,
+  url,
+  thumbnail,
+  onPress,
+}: {
+  p: Palette;
+  index: number;
+  title: string;
+  url: string;
+  thumbnail?: string;
+  onPress: () => void;
+}) {
+  const film = p.name === "Contact Sheet",
+    card = p.name === "Card Catalog",
+    paper = p.name === "Dot Martix";
+  if (!film && !card && !paper)
+    return <Row p={p} label={title} detail={url} onPress={onPress} />;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityHint={url}
+      onPress={onPress}
+      style={({ pressed }) => [
+        c.row,
+        {
+          marginHorizontal: card ? 7 : 0,
+          marginVertical: card ? 4 : 0,
+          borderWidth: card ? 1 : 0,
+          borderColor: p.edge,
+          backgroundColor: pressed
+            ? p.surface
+            : paper && index % 2 === 0
+              ? "#dfebc9"
+              : p.paper,
+        },
+      ]}
+    >
+      {film && <Thumbnail p={p} uri={thumbnail} />}
+      {paper && <Text style={{ color: p.edge }}>○</Text>}
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={{ color: p.ink, fontWeight: "bold" }}>{title}</Text>
+        <Text
+          numberOfLines={2}
+          style={{ fontFamily: "monospace", color: p.ink, fontSize: 13 }}
+        >
+          {new URL(url).host}
+        </Text>
+      </View>
     </Pressable>
   );
 }
@@ -122,7 +253,7 @@ export const c = StyleSheet.create({
   root: { flex: 1 },
   bar: { paddingHorizontal: 5, paddingBottom: 4, gap: 3 },
   address: {
-    minHeight: 36,
+    minHeight: 48,
     backgroundColor: "#fffdf4",
     borderWidth: 1,
     borderColor: "#6e6b62",
@@ -141,7 +272,7 @@ export const c = StyleSheet.create({
   brandBox: { paddingHorizontal: 7, paddingVertical: 6 },
   keys: { flexDirection: "row", gap: 4 },
   key: {
-    minHeight: 44,
+    minHeight: 48,
     minWidth: 48,
     flex: 1,
     borderWidth: 2,
@@ -151,7 +282,7 @@ export const c = StyleSheet.create({
   },
   glyph: { fontSize: 17, fontWeight: "bold", lineHeight: 20 },
   keyLabel: { fontWeight: "700", fontSize: 12 },
-  grip: { height: 26, justifyContent: "center", alignItems: "center" },
+  grip: { height: 48, justifyContent: "center", alignItems: "center" },
   ridge: { height: 5, width: 74, borderTopWidth: 2, borderBottomWidth: 1 },
   backdrop: {
     position: "absolute",
@@ -169,7 +300,7 @@ export const c = StyleSheet.create({
   },
   title: { color: "#fff5dd", fontSize: 17, fontWeight: "800" },
   row: {
-    minHeight: 47,
+    minHeight: 48,
     padding: 9,
     flexDirection: "row",
     alignItems: "center",
@@ -178,7 +309,7 @@ export const c = StyleSheet.create({
   },
   rowLabel: { fontSize: 16, fontWeight: "600" },
   panelInput: {
-    minHeight: 44,
+    minHeight: 48,
     backgroundColor: "#fffdf2",
     color: "#20251f",
     borderWidth: 1,
