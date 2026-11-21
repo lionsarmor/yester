@@ -385,6 +385,10 @@ function Browser() {
     return () => sub.remove();
   });
   function create(startUrl: string = EDITOR) {
+    if (Platform.OS === "web") {
+      window.open(startUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
     desiredMute.current = false;
     setFullscreen(false);
     generation.current++;
@@ -478,6 +482,28 @@ function Browser() {
   const saved = lib.data.marks.some((m) => m.url === url);
   return (
     <SafeAreaView style={[c.root, { backgroundColor: p.surface }]}>
+      {p.id === "pigeon" && visible && !fullscreen && (
+        <View style={{ backgroundColor: p.surface, borderWidth: 1, borderColor: p.edge }}>
+          <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 6, paddingVertical: 3, backgroundColor: p.dark }}>
+            <Art source={require("./assets/frames/pigeon/title.png")} />
+            <Image source={p.badge} style={{width: 25, height: 20}} resizeMode="contain" />
+            <Text numberOfLines={1} style={{flex: 1, marginLeft: 6, color: "#fff", fontWeight: "bold"}}>YESTER — {current.title}</Text>
+          </View>
+          <View style={{flexDirection:"row",flexWrap:"wrap"}}>
+            {([
+              ["File", () => show("Menu")], ["Edit", typeAddress],
+              ["View", () => show("Settings")], ["Go", () => show("Discover")],
+              ["Favorites", () => {setRecentTab(false); show("Library");}],
+              ["Help", () => {show("Settings"); setSection("About YESTER");}],
+            ] as const).map(([label, run]) => (
+              <Pressable key={label} accessibilityRole="button" accessibilityLabel={label}
+                onPress={run} style={{paddingHorizontal:8,minHeight:34,justifyContent:"center"}}>
+                <Text style={{color:p.ink,fontSize:14,textDecorationLine:"underline"}}>{label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      )}
       <View
         style={{ flex: 1 }}
         onTouchStart={() => setHeld(true)}

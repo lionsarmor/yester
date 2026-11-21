@@ -58,6 +58,7 @@ export function Settings({
   }
   const groups = (
     <View style={wide ? { width: "34%" } : undefined}>
+      <Row label="Open Retro Page" detail="Create or edit your site" action="creator" p={p} onPress={create} />
       {sections.map(([name, icon]) => (
         <Row
           key={name}

@@ -1,3 +1,4 @@
+import { arcadeDemo } from "./launchAddress";
 import { useEffect, useRef, useState } from "react";
 import Storage from "@react-native-async-storage/async-storage";
 import { webURL, type Visit, type Mode } from "./discovery";
@@ -26,7 +27,7 @@ const empty: Data = {
   marks: [],
   recent: [],
   prefs: {
-    frame: "DeskSet 3.2",
+    frame: arcadeDemo ? "Pigeon Press" : "DeskSet 3.2",
     resume: false,
     textEdition: false,
     gestures: true,

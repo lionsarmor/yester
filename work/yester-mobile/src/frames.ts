@@ -1,6 +1,6 @@
 // Frame artwork is bundled so tools and navigation remain available offline.
 import metadata from '../assets/frames/frames.json';
-export type Frame = "DeskSet 3.2" | "County Dialer" | "TapeDeck Live" | "Amberline" | "Bubble Comet" | "Field Atlas" | "Bijou Box" | "Pocket Relay" | "Ceefaux 404" | "MidiVidi 64" | "Dot Martix" | "Card Catalog" | "Cable Guide 96" | "Contact Sheet";
+export type Frame = "Pigeon Press" | "DeskSet 3.2" | "County Dialer" | "TapeDeck Live" | "Amberline" | "Bubble Comet" | "Field Atlas" | "Bijou Box" | "Pocket Relay" | "Ceefaux 404" | "MidiVidi 64" | "Dot Martix" | "Card Catalog" | "Cable Guide 96" | "Contact Sheet";
 export type FrameAction = "back" | "forward" | "next" | "stop" | "reload" | "tools" | "sound" | "muted" | "save" | "saved" | "share" | "library" | "discover" | "settings" | "creator" | "account" | "fullscreen" | "exitFullscreen" | "address" | "history";
 export interface Palette {
  name: Frame; id:string; radius:number;
@@ -431,6 +431,24 @@ const art = {
     },
   },
 };
+const pigeonKey = require("../assets/frames/pigeon/key.png");
+const pigeon = {
+  ...art.deskset,
+  badge: require("../assets/frames/pigeon/badge.png"),
+  housing: require("../assets/frames/pigeon/housing.png"),
+  keyArt: pigeonKey,
+  keyFaces: [pigeonKey, pigeonKey, pigeonKey, pigeonKey],
+  addressArt: require("../assets/frames/pigeon/address.png"),
+  icons: {
+    ...art.deskset.icons,
+    address: require("../assets/frames/pigeon/address-icon.png"),
+    back: require("../assets/frames/pigeon/back.png"),
+    next: require("../assets/frames/pigeon/next.png"),
+    forward: require("../assets/frames/pigeon/forward.png"),
+    save: require("../assets/frames/pigeon/saved.png"),
+  },
+};
+const artwork = { ...art, pigeon };
 export const frames = Object.fromEntries(metadata.map(frame => [
-  frame.name, {...frame, ...art[frame.id as keyof typeof art]},
+  frame.name, {...frame, ...artwork[frame.id as keyof typeof artwork]},
 ])) as Record<Frame,Palette>;

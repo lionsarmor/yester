@@ -1,6 +1,7 @@
 import type { Frame } from "./frames";
 
 export const specimens: Record<Frame, number> = {
+  "Pigeon Press": require("../assets/specimens/pigeon.webp"),
   "DeskSet 3.2": require("../assets/specimens/deskset.webp"),
   "County Dialer": require("../assets/specimens/county.webp"),
   "TapeDeck Live": require("../assets/specimens/tape.webp"),
