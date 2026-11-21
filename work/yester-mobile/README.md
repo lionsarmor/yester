@@ -2,6 +2,10 @@
 
 A phone browser for YesterSites. Discover a listed member homepage, follow a link, save the exact page, or swipe up from the bottom grip to discover another member. The address field opens the full URL. Tap the grip to bring back the controls.
 
+Swipe slowly left on the grip or on a free patch of a page in the phone app to uncover the next destination. Pull back before releasing to keep reading. A quick left flick opens the destination immediately. Hold still briefly and then drag in either direction to open a page as soon as the indicator reaches the end of the scale. Right goes back one page. Left uses Forward history first, then the current discovery mode. Links, form controls, media, and games keep their own touch input.
+
+Listed member HTML pages have a silent, script-free page preview. Other destinations show their title and address until opened. In the web demo, use the grip for a continuous peek across iframe boundaries. Settings → Navigation → Swipe to browse turns gestures off.
+
 ## Run the app
 
 Install Node 24 and the dependencies with `npm ci`. The app uses Expo SDK 58, React Native and the platform WebView.
@@ -13,7 +17,7 @@ Install Node 24 and the dependencies with `npm ci`. The app uses Expo SDK 58, Re
 
 ## Frame cabinet
 
-Tools → Settings → Frame cabinet lets you try fourteen browser frames using the approved artwork. Apply a frame to keep it on this device. Use a native build to test per-site media controls. Expo Go lacks the YESTER native module. [Try the interactive Android preview](https://android.yestersites.com/).
+Tools → Settings → Frame cabinet lets you try fifteen browser frames using the approved artwork. Apply a frame to keep it on this device. Use a native build to test per-site media controls. Expo Go lacks the YESTER native module. [Try the interactive Android preview](https://android.yestersites.com/).
 
 ## Live integrations
 

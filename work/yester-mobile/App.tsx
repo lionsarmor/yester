@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   AccessibilityInfo,
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
   BackHandler,
   Image,
   KeyboardAvoidingView,
@@ -15,6 +18,8 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import type { WebViewNavigation } from "react-native-webview";
 import WebView from "./src/BrowserSurface";
+import PeekPage from "./src/PeekPage";
+import { pageTouches, turnDecision, turnThreshold, type DragSample } from "./src/pageTurn";
 import { arcadeDemo } from "./src/launchAddress";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -58,6 +63,7 @@ const thumbnail = (site: Site) =>
       starterArt[site.slug] +
       ".webp"
     : homepage(site) + "favicon.ico";
+const gripTouchStyle = { ...StyleSheet.flatten(c.grip), touchAction: "none" as const };
 const starter = "https://quarter-moon-arcade.yestersites.com/";
 const editorForms = `if(location.origin === new URL(${JSON.stringify(EDITOR)}).origin){
   const submit = HTMLFormElement.prototype.submit;
@@ -120,7 +126,7 @@ function Browser() {
     [refresh, setRefresh] = useState(0);
   const [native, setNative] = useState({ back: false, forward: false });
   const view = useRef<WebView<object>>(null),
-    gripY = useRef(0),
+    grip = useRef({ x: 0, y: 0, time: 0, held: false, moving: false }),
     first = useRef(true);
   const seen = useRef<Record<Mode, Set<string>>>({
     Shuffle: new Set(),
@@ -138,6 +144,52 @@ function Browser() {
     });
   const active = trail.current;
   const source = React.useMemo(() => ({ uri: document.url }), [document]);
+
+  const { width } = useWindowDimensions();
+  const offset = useRef(new Animated.Value(0)).current;
+  type Target = { direction: -1 | 1; url: string; title: string; site?: Site };
+  const [peek, setPeek] = useState<Target | null>(null);
+  const [atNotch, setAtNotch] = useState(false);
+  const targetRef = useRef<Target | null>(null);
+  const turnFinished = useRef(false);
+  const canTurn = started && prefs.gestures && !editor && !panel && !fullscreen && !isReading;
+  function clearTurn() {
+    offset.setValue(0);
+    targetRef.current = null;
+    setPeek(null);
+    setAtNotch(false);
+  }
+  useEffect(() => {
+    clearTurn();
+    if (Platform.OS !== "web" && !editor)
+      view.current?.injectJavaScript("window.__yesterTurnsOn=" + canTurn + ";true;");
+  }, [canTurn, width, url]);
+  function turn(sample: DragSample) {
+    if (!canTurn || turnFinished.current) return;
+    if (sample.phase === "cancel") { clearTurn(); return; }
+    const result = turnDecision(sample, width);
+    if (!result.horizontal) { clearTurn(); return; }
+    let target = targetRef.current;
+    if (target?.direction !== result.direction) {
+      const entry = trail.entries[trail.index + result.direction];
+      if (entry) target = {direction: result.direction, url: entry.url, title: entry.title};
+      else if (result.direction === 1 && suggestion) target = {
+        direction: 1, site: suggestion, title: suggestion.title,
+        url: homepage(suggestion) + (prefs.textEdition ? "text.html" : ""),
+      };
+      else { clearTurn(); return; }
+      targetRef.current = target;
+      setPeek(target);
+    }
+    offset.setValue(Math.sign(sample.dx) * Math.min(width, Math.abs(sample.dx)));
+    setAtNotch(result.crossed);
+    if (result.commit) {
+      turnFinished.current = true;
+      clearTurn();
+      if (target.site) discover(prefs.mode, target.site);
+      else travel(target.direction);
+    } else if (sample.phase === "end") clearTurn();
+  }
 
   function wake() {
     setVisible(true);
@@ -293,11 +345,11 @@ function Browser() {
     const timer = setTimeout(() => start(), 4500);
     return () => clearTimeout(timer);
   }, [lib.ready, sites]);
-  function discover(mode: Mode = prefs.mode) {
+  function discover(mode: Mode = prefs.mode, pinned?: Site) {
     const history = seen.current[mode];
     if (anchor.current) history.add(anchor.current);
     const picked = nextSite(sites, mode, anchor.current, history);
-    const site = mode === prefs.mode && suggestion ? suggestion : picked;
+    const site = pinned ?? (mode === prefs.mode && suggestion ? suggestion : picked);
     if (!site) {
       show("Discover");
       setNotice("No matching sites are available yet.");
@@ -505,7 +557,7 @@ function Browser() {
         </View>
       )}
       <View
-        style={{ flex: 1 }}
+        style={{ flex: 1, overflow: "hidden" }}
         onTouchStart={() => setHeld(true)}
         onTouchCancel={() => setHeld(false)}
         onTouchEnd={() => {
@@ -513,6 +565,7 @@ function Browser() {
           setActivity((n) => n + 1);
         }}
       >
+        <Animated.View style={{flex:1, transform:[{translateX:offset}]}}>
         {!started && (
           <View
             accessibilityLiveRegion="polite"
@@ -546,7 +599,7 @@ function Browser() {
                   ";if(location.origin===" +
                   JSON.stringify(SERVICE) +
                   "){if(location.pathname==='/account/' || location.pathname==='/signin/')window.ReactNativeWebView.postMessage(JSON.stringify({handle:document.querySelector('p b')?.textContent||''}));}true;"
-                : undefined
+                : "window.__yesterTurnsOn=" + canTurn + ";" + pageTouches
             }
             onMessage={
               editor
@@ -565,7 +618,15 @@ function Browser() {
                       } catch {}
                     }
                   }
-                : undefined
+                : (e) => {
+                    if (!canTurn || generation.current !== document.key || e.nativeEvent.data.length > 512) return;
+                    try {
+                      const g = JSON.parse(e.nativeEvent.data).turn;
+                      if (g?.phase === "start") { turnFinished.current = false; clearTurn(); return; }
+                      if (g && ["move","end","cancel"].includes(g.phase) &&
+                        [g.dx,g.dy,g.elapsed].every(Number.isFinite) && g.elapsed >= 0 && typeof g.held === "boolean") turn(g);
+                    } catch {}
+                  }
             }
             onHttpError={(e) => {
               if (
@@ -656,6 +717,23 @@ function Browser() {
             {row("Discover another site", () => discover())}
           </View>
         )}
+        </Animated.View>
+        {peek && (
+          <Animated.View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
+            style={[StyleSheet.absoluteFill, {backgroundColor:p.paper, borderColor:p.edge, borderWidth:2,
+              transform:[{translateX:Animated.add(offset, peek.direction * width)}]}]}>
+            <View style={{backgroundColor:p.display, paddingHorizontal:10, paddingVertical:6, borderBottomWidth:1, borderColor:p.edge}}>
+              <Text numberOfLines={1} style={{color:p.displayInk,fontFamily:"monospace",fontWeight:"bold"}}>
+                {peek.direction === -1 ? "◀ BACK" : "NEXT ▶"} · {peek.title}
+              </Text>
+              <Text numberOfLines={1} style={{color:p.displayInk,fontSize:12}}>{new URL(peek.url).host}</Text>
+            </View>
+            {sites.some(site => new URL(peek.url).origin === new URL(homepage(site)).origin)
+              && /^\/(?:[\w-]+\/)*(?:[\w-]+\.html?)?$/.test(new URL(peek.url).pathname) && !new URL(peek.url).search
+              ? <PeekPage key={peek.url} url={peek.url} />
+              : <View style={{flex:1,padding:18,justifyContent:"center"}}><Text style={{color:p.ink,fontSize:20,fontWeight:"bold"}}>{peek.title}</Text><Text style={{color:p.ink}}>{peek.url}</Text></View>}
+          </Animated.View>
+        )}
       </View>
       <View
         style={[c.bar, { backgroundColor: p.surface }]}
@@ -674,23 +752,36 @@ function Browser() {
           accessibilityLabel={
             fullscreen
               ? "Exit fullscreen"
-              : "Browser grip. Show controls or swipe up for next site"
+              : (canTurn ? "Browser grip. Swipe left to peek, right to go back, or up to discover" : "Browser grip. Show controls")
           }
           onAccessibilityTap={() => {
             setFullscreen(false);
             wake();
           }}
-          style={c.grip}
+          style={Platform.OS === "web" ? gripTouchStyle : c.grip}
           onStartShouldSetResponder={() => true}
           onResponderGrant={(e) => {
-            gripY.current = e.nativeEvent.pageY;
+            grip.current = { x:e.nativeEvent.pageX, y:e.nativeEvent.pageY, time:Date.now(), held:false, moving:false };
+            turnFinished.current = false;
             setHeld(true);
+          }}
+          onResponderMove={(e) => {
+            const start = grip.current, dx = e.nativeEvent.pageX-start.x, dy = e.nativeEvent.pageY-start.y;
+            const elapsed = Date.now()-start.time;
+            if (!start.moving && Math.abs(dx)>9 && Math.abs(dx)>Math.abs(dy)*1.5) {
+              start.moving = true;
+              start.held = elapsed >= 350;
+            }
+            if (start.moving) turn({phase:"move",dx,dy,elapsed,held:start.held});
           }}
           onResponderRelease={(e) => {
             setHeld(false);
-            if (gripY.current - e.nativeEvent.pageY > 32) {
-              if (!editor && prefs.gestures) discover();
-            } else {
+            const start = grip.current, dx = e.nativeEvent.pageX-start.x, dy = e.nativeEvent.pageY-start.y;
+            if (start.moving || Math.abs(dx)>15 && Math.abs(dx)>Math.abs(dy)) {
+              turn({phase:"end",dx,dy,elapsed:Date.now()-start.time,held:start.held});
+            } else if (dy < -32) {
+              if (canTurn) discover();
+            } else if (Math.abs(dy)<16 && Math.abs(dx)<16) {
               if (fullscreen) {
                 if (Platform.OS === "web" && globalThis.document.fullscreenElement) void globalThis.document.exitFullscreen().catch(() => {});
                 setFullscreen(false);
@@ -699,19 +790,32 @@ function Browser() {
               setActivity((n) => n + 1);
             }
           }}
-          onResponderTerminate={() => setHeld(false)}
+          onResponderTerminate={() => {setHeld(false); clearTurn();}}
         >
+          {canTurn && (
+            <Text numberOfLines={1} style={{color:p.displayInk, backgroundColor:p.display, paddingHorizontal:7,
+              fontFamily:"monospace",fontWeight:"bold",fontSize:12}}>
+              {peek ? (atNotch ? "Release to open" : "Drag farther to open") : "← Swipe to peek"}
+            </Text>
+          )}
           {fullscreen && (
             <Image
               source={p.icons.exitFullscreen}
               style={{ width: 18, height: 18, position: "absolute", right: 10 }}
             />
           )}
-          <Image
+          {peek && <View style={{width:88,height:12,justifyContent:"center",backgroundColor:p.display,borderColor:p.edge,borderWidth:1}}>
+            <View style={{height:1,backgroundColor:p.displayInk}} />
+            <View style={{position:"absolute",left:3,width:2,height:9,backgroundColor:p.displayInk}} />
+            <View style={{position:"absolute",right:3,width:2,height:9,backgroundColor:p.displayInk}} />
+            <Animated.View style={{position:"absolute",left:40,width:5,height:8,backgroundColor:p.displayInk,
+              transform:[{translateX:offset.interpolate({inputRange:[-turnThreshold(width),turnThreshold(width)],outputRange:[-37,37],extrapolate:"clamp"})}]}} />
+          </View>}
+          {!peek && <Image
             source={p.gripArt}
             resizeMode="stretch"
             style={{ width: 85, height: 13 }}
-          />
+          />}
         </View>
         {visible && !fullscreen && (
           <>

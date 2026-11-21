@@ -230,7 +230,7 @@ export function Settings({
         )}
         {section === "Navigation" && (
           <>
-            {toggle("gestures", "Swipe the grip to discover")}
+            {toggle("gestures", "Swipe to browse", "Swipe left to peek or flick to open. Hold a blank spot, then drag past the notch to turn. Swipe right for Back. The grip also works over games and videos.")}
             {toggle("folded", "Start with the toolbar folded")}
             {toggle("autoHide", "Hide controls after six seconds")}
             {heading("Discovery mode")}

@@ -44,6 +44,14 @@ export default forwardRef(function BrowserSurface(props, ref) {
     function receive(event) {
       if (!member || event.source !== frame.current?.contentWindow || event.origin !== parsed.origin) return;
       const data = event.data;
+      if (data?.surfer === "swipe" && typeof data.forward === "boolean") {
+        // Older published pages signal a completed swipe. The frame grip also
+        // reports continuous motion when the embedded origin owns the page.
+        const notifyTurn = turn => latest.current.onMessage?.({nativeEvent:{url,data:JSON.stringify({turn})}});
+        notifyTurn({phase:"start"});
+        notifyTurn({phase:"end",dx:data.forward ? -90 : 90,dy:0,elapsed:100,held:false});
+        return;
+      }
       if (data?.surfer === "ready" || data?.surfer === "link") {
         const valid = typeof data.url === "string" && webURL(data.url);
         if (!valid) return;
