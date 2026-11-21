@@ -30,7 +30,7 @@ The four site comparisons use 0.2.1. At 1200 × 1920 and 240 dpi, the tablet dis
 
 The active audio check used a loopback page playing a continuous 660 Hz Web Audio tone. Android reported the same active AAudio player before and after changing frame. Mute changed to Unmute, and swiping to a live site disposed the original audio player. This measures the app's playback lifecycle separately from physical speaker output.
 
-## Final Android build
+## Last build exercised on Android
 
 Signed APK **0.2.2**, version code **4**, SHA-256 `cee7edeef34c9fda406486819bf9ad8dab44236c6c4af74e08b549ce6150ef50`. This build upgraded the installed app in place.
 
@@ -42,4 +42,4 @@ Signed APK **0.2.2**, version code **4**, SHA-256 `cee7edeef34c9fda406486819bf9a
 
 ## Remaining checks
 
-Alt+L did not open the address field in the emulator using either injected Android key chords or the virtual hardware key combination. Tapping the address field worked. A physical keyboard test and investigation of Android key focus remain. No physical Android handset, iPhone, gamepad, screen-reader session or on-device iOS build was tested. The guestbook, publishing and account service belong to Retro Page and were not modified or release-tested in this browser pass.
+Alt+L did not open the address field in 0.2.2 using either injected Android key chords or the virtual hardware key combination. Tapping the address field worked. The signed 0.2.3 APK contains a new activity-window keyboard handler. Its SHA-256 is `baa4852708915b09e4588b12fc0f395984d9c798612d183835f68f461ab4fe23`. A rerun on the software-emulated Android guest was blocked during installation. The desktop login greeter held hardware acceleration, and the software guest’s Android system service repeatedly crashed, including a lost network stack. The 0.2.3 shortcut, launch and device interaction remain unverified. A keyboard retest against this build remains open. No physical Android handset, iPhone, gamepad, screen-reader session or on-device iOS build was tested. The guestbook, publishing and account service belong to Retro Page and were not modified or release-tested in this browser pass.
