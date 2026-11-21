@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'YesterControls'
-  s.version = '0.2.2'
+  s.version = '0.2.3'
   s.summary = 'YESTER browser controls'
   s.author = 'RODDY'
   s.homepage = 'https://yestersites.com'

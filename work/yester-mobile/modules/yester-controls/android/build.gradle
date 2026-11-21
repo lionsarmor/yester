@@ -3,6 +3,6 @@ plugins {
   id 'expo-module-gradle-plugin'
 }
 group = 'world.roddy.controls'
-version = '0.2.2'
+version = '0.2.3'
 android { namespace 'world.roddy.controls' }
 dependencies { implementation 'androidx.webkit:webkit:1.14.0' }

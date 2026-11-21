@@ -1,0 +1,21 @@
+{"case": "signed-out arcade", "observed": "https://quarter-moon-arcade.yestersites.com/"}
+{"case": "signed-out arcade", "observed": "https://quarter-moon-arcade.yestersites.com/"}
+{"case": "play/rotate in same window", "observed": {"dimensions": [1440, 720], "foreground": "world.roddy.yester"}}
+{"case": "exit fullscreen", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html"}
+{"case": "sharesheet", "observed": ["Sharing link", "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?club=quarter-moon&visit=review#game-room"]}
+{"case": "Back/Forward/Next after outside visit", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?club=quarter-moon&visit=review#game-room \u2192 https://example.org/"}
+{"case": "discovery after outside visit", "observed": "https://firefly-film-club.yestersites.com/"}
+{"case": "reopen exact bookmark with travel log cleared and disabled", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?club=quarter-moon&visit=review#game-room"}
+{"case": "open Retro Page and return", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?club=quarter-moon&visit=review#game-room"}
+{"case": "manual fold/reopen with idle hide off", "observed": "Fold persisted until next grip tap"}
+{"case": "immediate resume after force-stop", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?club=quarter-moon&visit=review#game-room"}
+{"case": "tablet section navigation + selected pane", "observed": [1200, 1920]}
+{"case": "theme change kept same live Web Audio player", "observed": ["AudioPlaybackConfiguration piid:111 deviceId:2 type:AAudio u/pid:1010210/12529 state:started attr:AudioAttributes: usage=USAGE_MEDIA content=CONTENT_TYPE_UNKNOWN source=DEFAULT flags=0x0 tags= bundle=null sessionId:-1 mutedState:none  FormatInfo{isSpatialized=false, channelMask=0x3, sampleRate=48000}"]}
+{"case": "dispose active Web Audio on discovery", "observed": {"before": ["AudioPlaybackConfiguration piid:111 deviceId:2 type:AAudio u/pid:1010210/12529 state:started attr:AudioAttributes: usage=USAGE_MEDIA content=CONTENT_TYPE_UNKNOWN source=DEFAULT flags=0x0 tags= bundle=null sessionId:-1 mutedState:none  FormatInfo{isSpatialized=false, channelMask=0x3, sampleRate=48000}"], "after": [], "controls": ["Unmute site", "Unmute site"]}}
+{"case": "ordinary cross-domain anchor and back/forward", "observed": {"anchor": "http://127.0.0.1:48292/", "target": "https://quarter-moon-arcade.yestersites.com/"}}
+{"case": "empty discovery and connection recovery", "observed": "https://nightshift.yestersites.com/"}
+{"case": "recorded YESTER digital audio, mute, unmute and discovery", "observed": [{"state": "audible", "seconds": [2, 5], "pcm16_rms": 6747.9}, {"state": "muted", "seconds": [6, 9], "pcm16_rms": 0.29}, {"state": "unmuted", "seconds": [10, 15], "pcm16_rms": 5226.6}, {"state": "after discovery", "seconds": [17, 35], "pcm16_rms": 0.29}]}
+{"case": "long address exact", "observed": "https://quarter-moon-arcade.yestersites.com/page-fb9fd18c43584ea4e062791df976439e.html?from=quarter-moon-quarter-moon-quarter-moon-quarter-moon-quarter-moon-quarter-moon-quarter-moon-quarter-moon-quarter-moon-#room"}
+{"case": "same-URL retry after connection recovery", "observed": "http://127.0.0.1:48293/retry?edition=classic#station-log"}
+{"case": "tablet section navigation + selected pane", "observed": [1200, 1920]}
+{"case": "Alt+L with focus in the live webpage", "observed": "Could not reproduce shortcut on this emulator"}

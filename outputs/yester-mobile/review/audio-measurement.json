@@ -1,0 +1,76 @@
+{
+  "method": "Android System UI screen recording; Device audio only, single app YESTER; AAC decoded to 16 kHz signed 16-bit mono PCM",
+  "windows": [
+    {
+      "state": "audible",
+      "seconds": [
+        2,
+        5
+      ],
+      "pcm16_rms": 6747.9
+    },
+    {
+      "state": "muted",
+      "seconds": [
+        6,
+        9
+      ],
+      "pcm16_rms": 0.29
+    },
+    {
+      "state": "unmuted",
+      "seconds": [
+        10,
+        15
+      ],
+      "pcm16_rms": 5226.6
+    },
+    {
+      "state": "after discovery",
+      "seconds": [
+        17,
+        35
+      ],
+      "pcm16_rms": 0.29
+    }
+  ],
+  "second_rms": [
+    3169.88,
+    5619.14,
+    6749.88,
+    6747.81,
+    6746.0,
+    4223.59,
+    0.29,
+    0.29,
+    0.29,
+    2899.35,
+    5229.57,
+    5228.87,
+    5225.82,
+    5226.87,
+    5221.86,
+    2748.84,
+    0.29,
+    0.29,
+    0.29,
+    0.3,
+    0.29,
+    0.3,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.28,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29
+  ]
+}
