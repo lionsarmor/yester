@@ -22,8 +22,9 @@ import WebView from "./src/BrowserSurface";
 import PeekPage from "./src/PeekPage";
 import { pageTouches, turnDecision, turnThreshold, type DragSample } from "./src/pageTurn";
 import { nativeReadingScript, readingPlace, type ReadingPlace } from "./src/readingPlace";
+import BuddyWindow from "./src/BuddyWindow";
 import Neighborhood from "./src/Neighborhood";
-import { feedLink, openSharedFeed, viewerHome, memberAddress } from "./src/feedLink";
+import { feedLink, openSharedFeed, viewerHome } from "./src/feedLink";
 import { arcadeDemo } from "./src/launchAddress";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -54,7 +55,7 @@ import type { FrameAction } from "./src/frames";
 import { Trail, type Entry } from "./src/trail";
 import { useLibrary } from "./src/useLibrary";
 
-type Panel = "Menu" | "Address" | "Discover" | "Library" | "Settings";
+type Panel = "Menu" | "Address" | "Discover" | "Library" | "Settings" | "Share";
 const starterArt: Record<string, string> = {
   "quarter-moon-arcade": "free-play",
   "pocket-bog": "pocket-bog",
@@ -76,6 +77,7 @@ const editorForms = `if(location.origin === new URL(${JSON.stringify(EDITOR)}).o
   document.addEventListener('submit',e=>target(e.target),true);
 } true;`;
 function Browser() {
+  const [buddyDraft,setBuddyDraft]=useState<string|null>(null);
   const [feedAddress,setFeedAddress]=useState<string|null>(Platform.OS==="web"?null:viewerHome);
   useEffect(()=>{
     if(Platform.OS==="web")return;
@@ -552,6 +554,7 @@ function Browser() {
   const saved = lib.data.marks.some((m) => m.url === url);
   return (
     <SafeAreaView style={[c.root, { backgroundColor: p.surface }]}>
+      {buddyDraft && <BuddyWindow uri={buddyDraft} close={()=>setBuddyDraft(null)} openFeed={setFeedAddress}/>}
       {p.id === "pigeon" && visible && !fullscreen && (
         <View style={{ backgroundColor: p.surface, borderWidth: 1, borderColor: p.edge }}>
           <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 6, paddingVertical: 3, backgroundColor: p.dark }}>
@@ -971,6 +974,18 @@ function Browser() {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ backgroundColor: p.paper }}
             >
+              {panel === "Share" && <>
+                <Text selectable style={{color:p.ink,padding:12}}>{url}</Text>
+                {row("Copy link",()=>{void Clipboard.setStringAsync(feedLink(url)).then(()=>setNotice("Copied")).catch(()=>setNotice("Use Share via… to copy the link."));},undefined,false,"address")}
+                {(Platform.OS!=="web" || !!globalThis.navigator?.share) && row("Share via…",()=>{void Share.share({message:feedLink(url),url:feedLink(url),title:current.title}).catch(()=>setNotice("Use Copy link to share."));},undefined,false,"share")}
+                {row("Send to a buddy",()=>{
+                  const skins:Record<string,string>={deskset:"win31",county:"classic",tape:"real",bijou:"cinema",relay:"pocket",ceefaux:"teletext",midi:"synth",dot:"ledger"};
+                  const args=new URLSearchParams({url,title:current.title.slice(0,160),theme:skins[p.id]||p.id});
+                  const uri="https://buddy.roddy.world/share/#"+args.toString();
+                  if(Platform.OS==="web")window.open(uri,"_blank","noopener,noreferrer");
+                  else setBuddyDraft(uri);
+                },undefined,false,"account")}
+              </>}
               {panel === "Menu" && (
                 <>
                   {row(
@@ -1020,24 +1035,7 @@ function Browser() {
                     fullscreen,
                     fullscreen ? "exitFullscreen" : "fullscreen",
                   )}
-                  {row(
-                    "Share",
-                    () => {
-                      const shared=memberAddress(url)?feedLink(url):url;
-                      if (Platform.OS === "web" && !globalThis.navigator?.share) {
-                        void Clipboard.setStringAsync(shared).then(() => setNotice("Page address copied."), () => setNotice("Use Address to copy the page link."));
-                        return;
-                      }
-                      void Share.share({
-                        message: shared,
-                        url: shared,
-                        title: current.title,
-                      }).catch(() => setNotice("Sharing unavailable."));
-                    },
-                    undefined,
-                    false,
-                    "share",
-                  )}
+                  {row("Share",()=>show("Share"),undefined,false,"share")}
                   {row(
                     "Library",
                     () => show("Library"),

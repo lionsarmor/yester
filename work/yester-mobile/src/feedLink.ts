@@ -9,7 +9,7 @@ export function memberAddress(raw: string | null) {
 }
 export function feedLink(raw?: string | null) {
   const viewer = new URL(viewerHome);
-  const href = memberAddress(raw ?? null);
+  const href = raw && webURL(raw);
   if (href) viewer.searchParams.set("url", href);
   return viewer.href;
 }
@@ -19,7 +19,8 @@ export function openSharedFeed(raw: string | null) {
     const u = new URL(raw);
     if (!(u.protocol === "yester:" && u.host === "browse") &&
         !(u.origin === "https://yestersites.com" && u.pathname === "/browse/")) return null;
-    const page = memberAddress(u.searchParams.get("url"));
+    const rawPage = u.searchParams.get("url");
+    const page = rawPage && webURL(rawPage);
     return page ? feedLink(page) : null;
   } catch { return null; }
 }
