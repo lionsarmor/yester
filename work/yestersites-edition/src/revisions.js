@@ -275,8 +275,9 @@ async function memberRelease(request,u,db,slug,path) {
   }
   let views=0;
   if(row.counter){
-    const count=request.method==="GET"?await db.prepare("INSERT INTO site_counters(slug,views) VALUES(?,1) ON CONFLICT(slug) DO UPDATE SET views=views+1 RETURNING views").bind(slug).first():await db.prepare("SELECT views FROM site_counters WHERE slug=?").bind(slug).first();
-    views=count?.views||0;
+    const standby=u.searchParams.get("yester-standby")==="1";
+    const count=request.method==="GET" && !standby?await db.prepare("INSERT INTO site_counters(slug,views) VALUES(?,1) ON CONFLICT(slug) DO UPDATE SET views=views+1 RETURNING views").bind(slug).first():await db.prepare("SELECT views FROM site_counters WHERE slug=?").bind(slug).first();
+    views=(count?.views||0)+(standby?1:0);
   }
   for(const item of page.items){
     if(item.widget==="guestbook")item.href=home+"guestbook/";

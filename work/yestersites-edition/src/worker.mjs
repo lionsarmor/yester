@@ -412,7 +412,20 @@ async function route(request,env) {
   const browse=p.match(/^\/api\/discover\/(next|previous|random|newest)$/);
   if(browse&&reading)return discover(db,browse[1],u.searchParams.get("from"));
   const published=p.match(/^\/members\/([a-z0-9-]{1,40})(?:\/(.*))?$/);
-  if(published){if(request.method==="GET" && (!published[2] || published[2]==="index.html")){const record=await db.prepare("SELECT json_extract(blocks_json,'$.stock') stock FROM member_sites WHERE slug=? AND listed=1").bind(published[1]).first();if(record)await countVisit(db,published[1]);}const response=await memberRelease(request,u,db,published[1],published[2]||"");if(response)return response;}
+  if(published){
+    const [,slug,path='']=published;
+    const standby=u.searchParams.get('yester-standby')==='1';
+    const seen=standby && u.searchParams.get('surfer')==='seen';
+    if(request.method==='GET' && (!standby || seen) && (!path || path==='index.html'))await countVisit(db,slug);
+    if(seen){
+      if(request.method==='GET' && /^(?:|(?:index|classic|phone|modern|text|page-[a-f0-9]{32}(?:-(?:classic|phone|modern|text))?)\.html)$/.test(path)){
+        await db.prepare("INSERT INTO site_counters(slug,views) SELECT slug,1 FROM member_sites WHERE slug=? AND json_extract(blocks_json,'$.counter')=1 ON CONFLICT(slug) DO UPDATE SET views=views+1").bind(slug).run();
+      }
+      return new Response(null,{status:204,headers:defaultHeaders});
+    }
+    const response=await memberRelease(request,u,db,slug,path);
+    if(response)return response;
+  }
   if (p==="/api/login" && reading) {
     const back=safeReturnTo(u.searchParams.get("returnTo"));
     return new Response(null,{status:302,headers:{...defaultHeaders,Location:owner?back:"/signin/?returnTo="+encodeURIComponent(back)}});

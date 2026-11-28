@@ -6,6 +6,44 @@
     if(event.origin==='https://yestersites.com' && event.source===parent && event.data?.surfer==='restore-place'
         && event.data.url===location.href) restore(event.data.place);
   });
+  const standby=new URL(location.href).searchParams.get('yester-standby')==='1';
+  let active=!standby, counted=!standby;
+  const embeds=new Map();
+  function parkMedia(){
+    for(const player of document.querySelectorAll('audio,video')){player.pause();player.muted=true;}
+    for(const node of document.querySelectorAll('iframe[src],iframe[srcdoc]')){
+      if(node.getAttribute('src')==='about:blank' && !node.hasAttribute('srcdoc'))continue;
+      embeds.set(node,[node.getAttribute('src'),node.getAttribute('srcdoc')]);
+      node.removeAttribute('srcdoc');node.src='about:blank';
+    }
+  }
+  const observer=new MutationObserver(parkMedia);
+  function setActive(value){
+    active=value;
+    if(active){
+      observer.disconnect();
+      for(const [node,[src,srcdoc]] of embeds){
+        if(!node.isConnected)continue;
+        if(srcdoc!==null)node.setAttribute('srcdoc',srcdoc);
+        if(src!==null)node.setAttribute('src',src);else node.removeAttribute('src');
+      }
+      embeds.clear();
+      if(!counted){
+        counted=true;
+        const url=new URL(location.href);url.searchParams.set('surfer','seen');
+        new Image().src=url.href;
+      }
+    }else{
+      parkMedia();observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','srcdoc']});
+    }
+  }
+  if(standby)setActive(false);
+  document.addEventListener('play',e=>{if(!active && e.target instanceof HTMLMediaElement){e.target.muted=true;e.target.pause();}},true);
+  window.addEventListener('message',e=>{
+    if(e.source===parent && e.origin==='https://yestersites.com' && e.data?.surfer==='page-state'){
+      if(e.data.active===true || e.data.active===false)setActive(e.data.active);
+    }
+  });
   let lastActivity=-1000;
   function activity(){if(performance.now()-lastActivity>500){lastActivity=performance.now();tell('activity',{});}}
   for(const event of ['pointermove','pointerdown','keydown'])document.addEventListener(event,activity,{passive:true});
@@ -67,7 +105,7 @@
       if(css.touchAction==='none' || (el.scrollWidth>el.clientWidth+2 && /auto|scroll/.test(css.overflowX)))return;
       if(scroller===document.scrollingElement && el.scrollHeight>el.clientHeight+2 && /auto|scroll/.test(css.overflowY))scroller=el;
     }
-    gesture={x:p.screenX,y:p.screenY,start:performance.now(),mouse,scroller,top:scroller.scrollTop,axis:null,held:false};
+    gesture={clientX:p.clientX,x:p.screenX,y:p.screenY,start:performance.now(),mouse,scroller,top:scroller.scrollTop,axis:null,held:false};
     if(mouse)e.preventDefault();
   }
   function move(e,p,end){
@@ -79,7 +117,7 @@
     }
     if(g.axis==='x'){
       if(e.cancelable)e.preventDefault();
-      tell('page-drag',{phase:end?'end':'move',dx,dy,elapsed,held:g.held});
+      tell('page-drag',{phase:end?'end':'move',dx,localDx:p.clientX-g.clientX,dy,elapsed,held:g.held});
     }else if(g.axis==='y' && g.mouse)g.scroller.scrollTop=g.top-dy;
     if(end)gesture=null;
   }
