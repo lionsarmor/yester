@@ -32,7 +32,7 @@ backend += (root/'src/my-sites.js').read_text() + '\n'
 backend += (root/'src/video-search.js').read_text() + '\n'
 backend += (root/'src/proton-smtp.js').read_text() + '\n'
 backend += (root/'src/email-reset.js').read_text() + '\n'
-bridge = (root/'src/surfer-bridge.js').read_text()
+bridge = '(() => {\n' + (root/'src/reading-place.js').read_text() + '\n' + (root/'src/surfer-bridge.js').read_text() + '\n})();'
 backend += '\nconst surferBridge=' + json.dumps(bridge) + ';\nconst surferBridgeHash=' + json.dumps(base64.b64encode(hashlib.sha256(bridge.encode()).digest()).decode()) + ';\n'
 dispatch = (root/'src/dispatch.js').read_text()
 if backend.count('export default ') != 1:
