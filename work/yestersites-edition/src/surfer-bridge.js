@@ -87,6 +87,27 @@
     test.setEnd(node,Math.min(node.length,offset+1));
     return Array.from(test.getClientRects()).some(r=>x>=r.left && x<=r.right && y>=r.top && y<=r.bottom);
   }
+  // Only a short, stationary press on the page background summons the browser keys.
+  // Keep this separate from swipe recognition so it also works with swipes disabled.
+  let tap=null;
+  document.addEventListener('pointerdown',e=>{
+    tap=null;
+    if(!active || !e.isPrimary || e.button!==0 || e.ctrlKey || e.altKey || e.shiftKey || e.metaKey ||
+       document.fullscreenElement || e.target.closest?.(controls+',form,[onclick],[tabindex],details,dialog') ||
+       textHit(e.clientX,e.clientY) || !window.getSelection()?.isCollapsed)return;
+    tap={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp};
+  },true);
+  document.addEventListener('pointermove',e=>{
+    if(tap?.id===e.pointerId && Math.hypot(e.clientX-tap.x,e.clientY-tap.y)>8)tap=null;
+  },{passive:true,capture:true});
+  document.addEventListener('pointerup',e=>{
+    const start=tap;tap=null;
+    if(active && start?.id===e.pointerId && e.timeStamp-start.time<400 &&
+       Math.hypot(e.clientX-start.x,e.clientY-start.y)<=8 && window.getSelection()?.isCollapsed)
+      tell('blank-tap',{});
+  },true);
+  document.addEventListener('pointercancel',()=>{tap=null;},true);
+  document.addEventListener('scroll',()=>{tap=null;},{passive:true,capture:true});
   function cancel(){
     if(gesture?.axis==='x')tell('page-drag',{phase:'cancel'});
     gesture=null;

@@ -8,7 +8,7 @@ Try the [interactive Android preview](https://android.yestersites.com/) to explo
 
 ## Screenshots
 
-[Compare the compact toolbar in all twelve neighborhood frames](outputs/yester-mobile/review/compact-frames.png). Heart tunes discovery for the site. Save bookmarks the exact page. More opens discovery, Library, sharing, sound, and settings.
+[Compare the four page actions in all twelve neighborhood frames](outputs/yester-mobile/review/page-action-frames.png). Tap blank page space to reveal or dismiss them. Open the three-ridge grip for the rail and browser controls together. More like this tunes discovery, Save bookmarks the exact page, the speaker toggles sound, and Share sends the page link. The controls fold after six idle seconds by default. See them on [Pixel Club’s diary](outputs/yester-mobile/review/phone/pixelclub-page-actions.png) and [Quarter Moon Arcade](outputs/yester-mobile/review/phone/arcade-page-actions.png).
 
 [The new neighborhood feed in Pigeon Press](outputs/yester-mobile/review/phone/neighborhood-feed.png) opens on Dot’s Pixel Attic. Tap the three-ridge grip to fold the toolbar, and an upward flick turns to the next site.
 
