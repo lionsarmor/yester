@@ -1,6 +1,6 @@
 # YESTER by RODDY
 
-**[Download YESTER 0.2.8 for Android (.apk)](https://github.com/lionsarmor/yester/releases/download/v0.2.8/YESTER-0.2.8.apk)**
+**[Download YESTER 0.2.9 for Android (.apk)](https://github.com/lionsarmor/yester/releases/download/v0.2.9/YESTER-0.2.9.apk)**
 
 Open this page on your Android phone or tablet, download the APK, and tap it in Files to install. The signed preview runs on Android 7 and later and includes 32-bit and 64-bit builds for ARM and Intel. Flick the ribbed grip up to visit another site. Pull slowly to open the toolbar. Choose Shuffle, Games, or Follow a ring, or open Library to follow a webmaster’s updates. The feed needs an internet connection.
 
@@ -43,6 +43,6 @@ git clone --recurse-submodules https://github.com/lionsarmor/yester.git
 
 ## Testing
 
-- **Android emulator on Linux.** With an Android virtual device named `YESTER_Pixel`, run `work/yester-mobile/scripts/launch-apk.sh /path/to/YESTER-0.2.8.apk`. The launcher installs the downloaded release and opens it on that device.
+- **Android emulator on Linux.** With an Android virtual device named `YESTER_Pixel`, run `work/yester-mobile/scripts/launch-apk.sh /path/to/YESTER-0.2.9.apk`. The launcher installs the downloaded release and opens it on that device.
 - **Mobile development.** In `work/yester-mobile`, run `npm ci`, `npm test` and `npm run typecheck`. See the [mobile README](work/yester-mobile/README.md) for Expo and iPhone simulator instructions.
 - **Member service.** Run `python3 work/yestersites-edition/scripts/build.py` to assemble the Worker. Its database binding is `DB`. Supply your own deployment settings and credentials. Optional build-time variables `FOUNDER_EMAIL_SHA256` and `FOUNDER_ACTIVATION_SHA256` enable the founder claim flow for your installation.
