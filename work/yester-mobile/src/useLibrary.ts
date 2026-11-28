@@ -8,6 +8,7 @@ export type Prefs = {
   resume: boolean;
   textEdition: boolean;
   gestures: boolean;
+  tactile: boolean;
   folded: boolean;
   quiet: boolean;
   log: boolean;
@@ -31,6 +32,7 @@ const empty: Data = {
     resume: false,
     textEdition: false,
     gestures: true,
+    tactile: false,
     folded: false,
     quiet: false,
     log: true,
@@ -80,6 +82,7 @@ export function useLibrary() {
             resume: p.resume === true,
             textEdition: p.textEdition === true,
             gestures: p.gestures !== false,
+            tactile: p.tactile === true,
             folded: p.folded === true,
             quiet: p.quiet === true,
             log: p.log !== false,

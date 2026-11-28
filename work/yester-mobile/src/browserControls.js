@@ -1,4 +1,5 @@
 export const nativeControls = {
+  tick(){navigator.vibrate?.(12);},
   async configure(muted, tap) {
     window.yesterMediaPreference = {muted, tap};
     window.dispatchEvent(new Event("yester-audio"));

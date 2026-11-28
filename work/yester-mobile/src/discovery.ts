@@ -4,6 +4,7 @@ export type Mode = "Shuffle" | "Play" | "Ring";
 export type Site = {
   slug: string;
   title: string;
+  description?: string;
   tags: string[];
   categories: string[];
   playable: boolean;
@@ -115,6 +116,7 @@ export async function directory(playOnly = false): Promise<Site[]> {
       rows.set(s.slug, {
         slug: s.slug,
         title: String(s.title || s.slug),
+        description: typeof s.snippet === "string" ? s.snippet.trim().slice(0,300) : "",
         categories: strings(s.categories),
         tags: strings(s.tags),
         playable: strings(s.capabilities).includes("playable"),

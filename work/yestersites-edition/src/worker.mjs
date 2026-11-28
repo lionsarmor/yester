@@ -316,7 +316,7 @@ const cartridgeExpression=`CASE WHEN instr(m.keywords_json,'"cap:cartridge"') TH
     WHERE rp.rev=json_extract(m.blocks_json,'$.release') AND instr(rp.body,'"widget":"game-cartridge"')) END`;
 async function playableDirectory(db,cursor){
   if(cursor && (cursor.length>40 || !slugPattern.test(cursor)))throw new Issue("Invalid directory cursor.");
-  const {results}=await db.prepare(`SELECT slug,title FROM member_sites m
+  const {results}=await db.prepare(`SELECT slug,title,snippet FROM member_sites m
     WHERE listed=1 AND slug>? AND ${cartridgeExpression} ORDER BY slug LIMIT 51`).bind(cursor||'').all();
   const sites=results.slice(0,50).map(row=>({...row,capabilities:['playable','touch','gamepad']}));
   return Response.json({sites,nextCursor:results.length>50?sites.at(-1).slug:null},
@@ -325,10 +325,11 @@ async function playableDirectory(db,cursor){
 async function directory(db,cursor) {
   if (cursor && (cursor.length>40 || !slugPattern.test(cursor))) throw new Issue("Invalid directory cursor.");
   const {results}=await db.prepare(`SELECT m.slug,m.creator_key,m.title,m.profile,m.byline,m.listed,m.updated_at,m.snippet,m.keywords_json,
+    (SELECT json_extract(r.metadata,'$.updatePath') FROM site_revisions r WHERE r.id=json_extract(m.blocks_json,'$.release') AND r.slug=m.slug) AS updatePath,
     ${cartridgeExpression} AS cartridge,
     (SELECT json_group_array(t.slug) FROM json_each(m.links_json) l JOIN member_sites t ON t.slug=l.value AND t.listed=1) AS targets
     FROM member_sites m WHERE m.listed=1 AND m.slug>? ORDER BY m.slug LIMIT 51`).bind(cursor || "").all();
-  const sites=results.slice(0,50).map(row=>({...publicFields(row),capabilities:row.cartridge?['playable','touch','gamepad']:[],snippet:row.snippet,...RetroTopics.unpack(JSON.parse(row.keywords_json)),keywords:JSON.parse(row.keywords_json).filter(s=>!s.startsWith('cap:')&&!s.startsWith('tag:')&&!s.startsWith('category:')),links:JSON.parse(row.targets || "[]").map(publicMemberUrl)}));
+  const sites=results.slice(0,50).map(row=>({...publicFields(row),updateUrl:row.updatePath?assignedUrl(row.slug)+row.updatePath:null,capabilities:row.cartridge?['playable','touch','gamepad']:[],snippet:row.snippet,...RetroTopics.unpack(JSON.parse(row.keywords_json)),keywords:JSON.parse(row.keywords_json).filter(s=>!s.startsWith('cap:')&&!s.startsWith('tag:')&&!s.startsWith('category:')),links:JSON.parse(row.targets || "[]").map(publicMemberUrl)}));
   return {sites,nextCursor:results.length>50?sites.at(-1).slug:null};
 }
 function renderBlock(b, index, page, textOnly) {

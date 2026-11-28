@@ -7,6 +7,7 @@ import {
   BackHandler,
   Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -20,6 +21,9 @@ import type { WebViewNavigation } from "react-native-webview";
 import WebView from "./src/BrowserSurface";
 import PeekPage from "./src/PeekPage";
 import { pageTouches, turnDecision, turnThreshold, type DragSample } from "./src/pageTurn";
+import { nativeReadingScript, readingPlace, type ReadingPlace } from "./src/readingPlace";
+import Neighborhood from "./src/Neighborhood";
+import { feedLink, openSharedFeed, viewerHome, memberAddress } from "./src/feedLink";
 import { arcadeDemo } from "./src/launchAddress";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -72,6 +76,15 @@ const editorForms = `if(location.origin === new URL(${JSON.stringify(EDITOR)}).o
   document.addEventListener('submit',e=>target(e.target),true);
 } true;`;
 function Browser() {
+  const [feedAddress,setFeedAddress]=useState<string|null>(Platform.OS==="web"?null:viewerHome);
+  useEffect(()=>{
+    if(Platform.OS==="web")return;
+    let live=true;
+    const open=(url:string|null)=>{const link=openSharedFeed(url);if(live && link)setFeedAddress(link);};
+    const sub=Linking.addEventListener("url",event=>open(event.url));
+    void Linking.getInitialURL().then(url=>open(url??null)).catch(()=>{});
+    return ()=>{live=false;sub.remove();};
+  },[]);
   const lib = useLibrary();
   const prefs = lib.data.prefs;
   const [preview, setPreview] = useState<Frame | null>(null),
@@ -90,7 +103,7 @@ function Browser() {
   const trail = useRef(new Trail()).current;
   const sequence = useRef(1),
     generation = useRef(1);
-  const [document, setDocument] = useState({ url: starter, key: 1 });
+  const [document, setDocument] = useState<{url:string; key:number; place?:ReadingPlace}>({ url: starter, key: 1 });
   const [url, setUrl] = useState(starter),
     [busy, setBusy] = useState(true),
     [error, setError] = useState("");
@@ -147,7 +160,7 @@ function Browser() {
 
   const { width } = useWindowDimensions();
   const offset = useRef(new Animated.Value(0)).current;
-  type Target = { direction: -1 | 1; url: string; title: string; site?: Site };
+  type Target = { direction: -1 | 1; url: string; title: string; description?: string; site?: Site };
   const [peek, setPeek] = useState<Target | null>(null);
   const [atNotch, setAtNotch] = useState(false);
   const targetRef = useRef<Target | null>(null);
@@ -172,9 +185,9 @@ function Browser() {
     let target = targetRef.current;
     if (target?.direction !== result.direction) {
       const entry = trail.entries[trail.index + result.direction];
-      if (entry) target = {direction: result.direction, url: entry.url, title: entry.title};
+      if (entry) target = {direction: result.direction, url: entry.url, title: entry.title, description:sites.find(s=>s.slug===memberOf(entry.url))?.description};
       else if (result.direction === 1 && suggestion) target = {
-        direction: 1, site: suggestion, title: suggestion.title,
+        direction: 1, site: suggestion, title: suggestion.title, description:suggestion.description,
         url: homepage(suggestion) + (prefs.textEdition ? "text.html" : ""),
       };
       else { clearTurn(); return; }
@@ -185,6 +198,7 @@ function Browser() {
     setAtNotch(result.crossed);
     if (result.commit) {
       turnFinished.current = true;
+      if (prefs.tactile) void nativeControls?.tick();
       clearTurn();
       if (target.site) discover(prefs.mode, target.site);
       else travel(target.direction);
@@ -223,6 +237,7 @@ function Browser() {
     return () => clearTimeout(timer);
   }, [isReading, prefs.autoHide, panel, held, editor, activity]);
   useEffect(() => {
+    if(feedAddress)return;
     let live = true;
     setCatalogState("Loading Grub…");
     Promise.allSettled([
@@ -252,7 +267,7 @@ function Browser() {
     return () => {
       live = false;
     };
-  }, [refresh]);
+  }, [refresh, Boolean(feedAddress)]);
   const suggestion = React.useMemo(
     () =>
       nextSite(
@@ -290,7 +305,7 @@ function Browser() {
     setError("");
     setUrl(entry.url);
     setNative({ back: false, forward: false });
-    setDocument({ key: generation.current, url: entry.url });
+    setDocument({ key: generation.current, url: entry.url, place:entry.place });
     wake();
   }
   function visit(href: string, title?: string, member?: string | null) {
@@ -313,7 +328,7 @@ function Browser() {
     fallback.current = prefs.textEdition ? home : "";
   }
   useEffect(() => {
-    if (!lib.ready || startedRef.current) return;
+    if (feedAddress || !lib.ready || startedRef.current) return;
     function start(site?: Site) {
       if (startedRef.current) return;
       startedRef.current = true;
@@ -344,7 +359,7 @@ function Browser() {
     }
     const timer = setTimeout(() => start(), 4500);
     return () => clearTimeout(timer);
-  }, [lib.ready, sites]);
+  }, [lib.ready, sites, Boolean(feedAddress)]);
   function discover(mode: Mode = prefs.mode, pinned?: Site) {
     const history = seen.current[mode];
     if (anchor.current) history.add(anchor.current);
@@ -395,7 +410,7 @@ function Browser() {
       session: trail.current.session,
     };
     if (first.current) {
-      trail.entries[trail.index] = entry;
+      trail.entries[trail.index] = trail.current.url === href ? {...trail.current,...entry} : entry;
       first.current = false;
     } else trail.push(entry);
     if (lib.ready) lib.recent(entry);
@@ -432,7 +447,7 @@ function Browser() {
     return false;
   }
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS === "web" || feedAddress) return;
     const sub = BackHandler.addEventListener("hardwareBackPress", back);
     return () => sub.remove();
   });
@@ -531,6 +546,9 @@ function Browser() {
     title: active.url === url ? active.title : new URL(url).hostname,
     member: memberOf(url) || active.member,
   };
+  if(feedAddress)return <Neighborhood address={feedAddress} openBrowser={href=>{
+    startedRef.current=true;setStarted(true);setFeedAddress(null);if(href)visit(href);else wake();
+  }}/>;
   const saved = lib.data.marks.some((m) => m.url === url);
   return (
     <SafeAreaView style={[c.root, { backgroundColor: p.surface }]}>
@@ -593,13 +611,14 @@ function Browser() {
             allowFileAccess={false}
             mixedContentMode="never"
             originWhitelist={["*"]}
+            injectedJavaScriptObject={Platform.OS === "web" ? {place:document.place} : undefined}
             injectedJavaScript={
               editor
                 ? editorForms +
                   ";if(location.origin===" +
                   JSON.stringify(SERVICE) +
                   "){if(location.pathname==='/account/' || location.pathname==='/signin/')window.ReactNativeWebView.postMessage(JSON.stringify({handle:document.querySelector('p b')?.textContent||''}));}true;"
-                : "window.__yesterTurnsOn=" + canTurn + ";" + pageTouches
+                : nativeReadingScript(document.url,document.place) + "window.__yesterTurnsOn=" + canTurn + ";" + pageTouches
             }
             onMessage={
               editor
@@ -619,9 +638,15 @@ function Browser() {
                     }
                   }
                 : (e) => {
-                    if (!canTurn || generation.current !== document.key || e.nativeEvent.data.length > 512) return;
+                    if (generation.current !== document.key || e.nativeEvent.data.length > 512) return;
                     try {
-                      const g = JSON.parse(e.nativeEvent.data).turn;
+                      const message = JSON.parse(e.nativeEvent.data);
+                      if (message.place && trail.current.url === e.nativeEvent.url) {
+                        const place = readingPlace(message.place);
+                        if (place) trail.current.place = place;
+                      }
+                      if (!canTurn) return;
+                      const g = message.turn;
                       if (g?.phase === "start") { turnFinished.current = false; clearTurn(); return; }
                       if (g && ["move","end","cancel"].includes(g.phase) &&
                         [g.dx,g.dy,g.elapsed].every(Number.isFinite) && g.elapsed >= 0 && typeof g.held === "boolean") turn(g);
@@ -734,6 +759,9 @@ function Browser() {
               : <View style={{flex:1,padding:18,justifyContent:"center"}}><Text style={{color:p.ink,fontSize:20,fontWeight:"bold"}}>{peek.title}</Text><Text style={{color:p.ink}}>{peek.url}</Text></View>}
           </Animated.View>
         )}
+        {!!peek?.description && <View pointerEvents="none" style={{position:"absolute",bottom:0,left:0,right:0,padding:8,backgroundColor:p.display,borderTopWidth:1,borderColor:p.edge}}>
+          <Text numberOfLines={3} style={{color:p.displayInk,fontSize:14}}>{peek.description}</Text>
+        </View>}
       </View>
       <View
         style={[c.bar, { backgroundColor: p.surface }]}
@@ -995,13 +1023,14 @@ function Browser() {
                   {row(
                     "Share",
                     () => {
+                      const shared=memberAddress(url)?feedLink(url):url;
                       if (Platform.OS === "web" && !globalThis.navigator?.share) {
-                        void Clipboard.setStringAsync(url).then(() => setNotice("Page address copied."), () => setNotice("Use Address to copy the page link."));
+                        void Clipboard.setStringAsync(shared).then(() => setNotice("Page address copied."), () => setNotice("Use Address to copy the page link."));
                         return;
                       }
                       void Share.share({
-                        message: url,
-                        url,
+                        message: shared,
+                        url: shared,
                         title: current.title,
                       }).catch(() => setNotice("Sharing unavailable."));
                     },
@@ -1069,6 +1098,10 @@ function Browser() {
               )}
               {panel === "Discover" && (
                 <>
+                  {row("Neighborhood feed",()=>{
+                    if(Platform.OS==="web")window.location.assign(feedLink(url));
+                    else setFeedAddress(feedLink(url));
+                  },"Flick through live member sites",false,"discover")}
                   {suggestion && (
                     <Pressable
                       accessibilityRole="button"

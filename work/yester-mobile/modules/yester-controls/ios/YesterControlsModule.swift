@@ -52,6 +52,9 @@ public class YesterControlsModule: Module {
     Name("YesterControls")
     Events("shortcut")
     OnDestroy { Task { @MainActor in self.detachKeys() } }
+    AsyncFunction("tick") {
+      UISelectionFeedbackGenerator().selectionChanged()
+    }.runOnQueue(.main)
     AsyncFunction("configure") { (silent: Bool, _: Bool, promise: Promise) in
       Task { @MainActor in
         guard let controller = self.appContext?.utilities?.currentViewController(),

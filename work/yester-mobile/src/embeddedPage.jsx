@@ -44,6 +44,10 @@ export default forwardRef(function BrowserSurface(props, ref) {
     function receive(event) {
       if (!member || event.source !== frame.current?.contentWindow || event.origin !== parsed.origin) return;
       const data = event.data;
+      if(data?.surfer === "reading-place" && typeof data.url === "string" && webURL(data.url) && new URL(data.url).origin === parsed.origin) {
+        latest.current.onMessage?.({nativeEvent:{url:publicAddress(data.url),data:JSON.stringify({place:data.place})}});
+        return;
+      }
       if (data?.surfer === "swipe" && typeof data.forward === "boolean") {
         // Older published pages signal a completed swipe. The frame grip also
         // reports continuous motion when the embedded origin owns the page.
@@ -58,6 +62,8 @@ export default forwardRef(function BrowserSurface(props, ref) {
         const clean = publicAddress(valid);
         if (data.surfer === "link") latest.current.onOpenWindow?.({nativeEvent:{targetUrl:clean}});
         else if (new URL(clean).origin === parsed.origin) {
+          const place = latest.current.injectedJavaScriptObject?.place;
+          if(place && clean===url) frame.current.contentWindow.postMessage({surfer:"restore-place",url:data.url,place},parsed.origin);
           setReady(true);
           latest.current.onNavigationStateChange?.({url:clean,title:new URL(clean).hostname,loading:false,canGoBack:false,canGoForward:false});
           audio();

@@ -63,7 +63,14 @@ async function publishRelease(input, origin, owner, db, rev=crypto.randomUUID(),
     pages.push([id,serialized]);
   }
   try{RetroMedia.checkFrames(pages.map(([key,json])=>[key,JSON.parse(json)]));}catch(error){throw new Issue(error.message);}
-  const metadata={title:summary.title,profile:summary.profile,theme:summary.theme,byline:summary.byline,listed:Number(summary.listed),links:[...targets],snippet:summary.snippet,keywords:summary.keywords};
+  const description=requiredText(doc.grubDescription ?? '', 'Grub description', 180, true);
+  const metadata={title:summary.title,profile:summary.profile,theme:summary.theme,byline:summary.byline,listed:Number(summary.listed),links:[...targets],snippet:description || summary.snippet,keywords:summary.keywords};
+  const updatePage=doc.updatePage ?? source?.updatePage ?? 'home';
+  if(updatePage!=='home'){
+    if(ids.has(updatePage))metadata.updatePath='page-'+updatePage+'.html';
+    else if(typeof updatePage==='string' && updatePage.startsWith('bbs:') && allScreenIds.has(updatePage.slice(4)))metadata.updatePath='bbs/?page='+updatePage.slice(4);
+    else throw new Issue('Choose an existing page for the Library update.');
+  }
   const slug=summary.slug, ptr=JSON.stringify({release:rev,counter:[doc,...doc.pages||[]].some(p=>p.items.some(i=>i.widget==="counter"))});
   let topics;
   if(doc.categories!==undefined || doc.tags!==undefined){

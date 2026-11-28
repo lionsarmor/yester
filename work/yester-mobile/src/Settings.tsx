@@ -84,6 +84,7 @@ export function Settings({
       | "autoHide"
       | "folded"
       | "gestures"
+      | "tactile"
       | "quiet"
       | "tapForSound"
       | "log"
@@ -231,6 +232,7 @@ export function Settings({
         {section === "Navigation" && (
           <>
             {toggle("gestures", "Swipe to browse", "Swipe left to peek or flick to open. Hold a blank spot, then drag past the notch to turn. Swipe right for Back. The grip also works over games and videos.")}
+            {toggle("tactile", "Click on page turn", "A single tactile tick when a swipe opens a page, on devices that support vibration.")}
             {toggle("folded", "Start with the toolbar folded")}
             {toggle("autoHide", "Hide controls after six seconds")}
             {heading("Discovery mode")}

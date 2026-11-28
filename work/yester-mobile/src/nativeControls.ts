@@ -1,6 +1,7 @@
 import { requireOptionalNativeModule } from "expo";
 type Events = { shortcut: (event: { action: string }) => void };
 type Controls = {
+  tick(): Promise<void>;
   addListener: (
     name: "shortcut",
     listener: Events["shortcut"],

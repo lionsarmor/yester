@@ -1,5 +1,6 @@
 import type { Visit } from "./discovery";
-export type Entry = Visit & { session: number };
+import type { ReadingPlace } from "./readingPlace";
+export type Entry = Visit & { session: number; place?: ReadingPlace };
 export class Trail {
   entries: Entry[] = [];
   index = -1;
@@ -17,7 +18,7 @@ export class Trail {
       entry.url === this.current?.url &&
       entry.session === this.current.session
     ) {
-      this.entries[this.index] = entry;
+      this.entries[this.index] = {...this.current,...entry};
       return;
     }
     this.entries.splice(this.index + 1, Infinity, entry);

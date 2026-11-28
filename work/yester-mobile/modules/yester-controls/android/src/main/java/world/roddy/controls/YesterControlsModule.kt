@@ -73,6 +73,10 @@ class YesterControlsModule : Module() {
     Name("YesterControls")
     Events("shortcut")
     OnDestroy { Handler(Looper.getMainLooper()).post { detach() } }
+    AsyncFunction("tick") {
+      appContext.currentActivity?.window?.decorView?.performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK)
+      Unit
+    }.runOnQueue(Queues.MAIN)
     AsyncFunction("configure") { muted: Boolean, tap: Boolean ->
       val target = appContext.currentActivity?.window ?: return@AsyncFunction false
       bind(target)
