@@ -1,0 +1,19 @@
+[Unit]
+Description=RODDY ID account service
+After=network.target
+[Service]
+User=roddy-id
+Group=roddy-id
+WorkingDirectory=/opt/roddy-id/app
+Environment=DJANGO_SETTINGS_MODULE=settings
+EnvironmentFile=-/etc/roddy-id/mail.env
+ExecStart=/opt/roddy-id/venv/bin/gunicorn --workers 1 --threads 3 --bind 127.0.0.1:8142 wsgi:application
+Restart=on-failure
+StateDirectory=roddy-id
+UMask=0077
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+[Install]
+WantedBy=multi-user.target

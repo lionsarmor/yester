@@ -384,8 +384,9 @@ async function route(request,env) {
   }
   if(p==='/api/member-badge/status' || p==='/api/member-badge/connect')return memberBadge(request,u,db,owner);
   await ensureOriginals(db);
+  if(p==='/api/roddy/callback' && request.method==='GET')return finishRoddyLogin(request,u,db);
   if(p==='/account/profile/')return editProfile(request,u,db,owner);
-  if(p==='/forgot/' || p==='/reset/')return emailRecovery(request,u,env);
+  if(p==='/forgot/' || p==='/reset/')return Response.redirect(roddyIssuer+'/password/reset/',303);
   if(p==='/api/editor/open')return redeemEditor(request,db);
   if(p==='/api/video-search' && reading)return videoSearch(request,u,env);
   if(p==='/api/member-host' && reading){

@@ -1,0 +1,25 @@
+accounts.roddy.world {
+    header Strict-Transport-Security "max-age=31536000"
+    handle_path /static/* {
+        root * /opt/roddy-id/app/static
+        file_server
+    }
+    handle {
+        reverse_proxy 127.0.0.1:8142 {
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+}
+
+index.roddy.world {
+    header Strict-Transport-Security "max-age=31536000"
+    handle_path /static/* {
+        root * /opt/roddy-id/app/static
+        file_server
+    }
+    handle {
+        reverse_proxy 127.0.0.1:8142 {
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+}

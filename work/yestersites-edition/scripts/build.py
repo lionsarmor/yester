@@ -25,6 +25,7 @@ backend += '\nconst originalSites=' + (root/'src/originals.json').read_text() + 
 backend += (root/'src/passwords.js').read_text() + '\n'
 backend += (root/'src/member-badge.js').read_text() + '\n'
 backend += (root/'src/profiles.js').read_text() + '\n'
+backend += (root/'src/roddy-id.js').read_text() + '\n'
 backend += (root/'src/accounts.js').read_text() + '\n'
 backend += '\nconst founderFiles=' + (root/'src/founder-files.json').read_text() + ';\n'
 backend += (root/'public/desktop/publish/zip.js').read_text().replace('window.makeSiteZip =', 'const makeOriginalZip =') + '\n'

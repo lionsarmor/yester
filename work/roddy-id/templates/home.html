@@ -1,0 +1,6 @@
+{% extends "allauth/layouts/base.html" %}{% block content %}
+{% if user.is_authenticated %}<h1>{{ user.username }}’s buddy list</h1>{% if is_founder %}<p><a href="https://index.roddy.world/">Open my private project index</a></p>{% endif %}<form action="/buddies/" method="post">{% csrf_token %}<label>Invite by handle<input name="handle" required maxlength="24"></label><button name="action" value="invite">Invite buddy</button></form>
+<ul>{% for row in rows %}<li><b>{% if row.sender == user %}{{ row.recipient.username }}{% else %}{{ row.sender.username }}{% endif %}</b>
+{% if row.accepted %} · Buddy{% elif row.recipient == user %} · Invited you{% else %} · Invitation sent{% endif %}
+<form action="/buddies/" method="post">{% csrf_token %}<input type="hidden" name="invite" value="{{ row.pk }}">{% if row.recipient == user and not row.accepted %}<button name="action" value="accept">Accept</button>{% endif %}<button name="action" value="remove">{% if row.accepted %}Remove{% elif row.sender == user %}Cancel{% else %}Decline{% endif %}</button></form></li>{% empty %}<li>Your accepted buddies will appear here.</li>{% endfor %}</ul>
+{% else %}<h1>Your RODDY account</h1><p>Pick a handle to use across RODDY apps and invite your friends.</p><p><a class="button" href="/login/">Sign in</a> <a href="/signup/">Create an account</a></p>{% endif %}{% endblock %}

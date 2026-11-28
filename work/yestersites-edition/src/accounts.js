@@ -53,7 +53,12 @@ async function accountRoute(request,u,db,owner){
     try{return await publishRelease(input.document,u.origin,owner,db,rev,input.source);}catch(error){if(await receipt())return success();throw error;}
   }
   if(!['GET','HEAD','POST'].includes(request.method))throw new Issue('Method not allowed.',405);
-  if(['/signin/','/signup/','/recover/','/signout/','/account/recovery/'].includes(p))return credentialsRoute(request,u,db,owner,back);
+  if(p==='/signin/' || p==='/signup/'){
+    if(request.method!=='GET')throw new Issue('Sign in at accounts.roddy.world.',405);
+    return owner ? redirect(back) : beginRoddyLogin(u,back);
+  }
+  if(p==='/recover/' || p==='/account/recovery/')return redirect(roddyIssuer+'/password/reset/');
+  if(p==='/signout/')return credentialsRoute(request,u,db,owner,back);
   const signup='/signup/'+query,signin='/signin/'+query;
   if(request.method==='POST')throw new Issue('Method not allowed.',405);
   if(p==='/account/publish/'){
@@ -71,5 +76,5 @@ async function accountRoute(request,u,db,owner){
   return accountWindow('My homepages',(profile?'<p>Signed in as <b>'+e(profile.handle)+'</b></p>':'')+(results.length?'<ul>'+results.map(r=>{
     const root='/account/sites/'+r.slug+'/';
     return '<li class="site-card"><strong>'+e(r.title)+'</strong><small>Last published '+e(r.updated_at.slice(0,10))+'</small><nav><a href="'+root+'edit">Edit</a> · <a href="'+publicMemberUrl(r.slug)+'">Visit</a> · <a href="'+root+'edit?publish=1">Publish changes</a> · <a href="'+root+'history">Version history / Restore</a> · <a href="'+root+'backup">Download backup</a></nav></li>';
-  }).join('')+'</ul>':'<p>Your first homepage starts in Retro Page.</p>')+'<a class="button" href="/account/profile/">Edit my profile</a> <a class="button primary" href="'+publicEditor+'">Open Retro Page</a> <form method="post" action="/signout/"><button>Sign out</button></form><details><summary>Account recovery</summary><form action="/account/recovery/" method="post"><label>Current password<input type="password" name="password" autocomplete="current-password" maxlength="256" required></label><button>Generate recovery key</button></form></details>');
+  }).join('')+'</ul>':'<p>Your first homepage starts in Retro Page.</p>')+'<a class="button" href="/account/profile/">Edit my profile</a> <a class="button primary" href="'+publicEditor+'">Open Retro Page</a> <form method="post" action="/signout/"><button>Sign out</button></form><p><a href="https://accounts.roddy.world/">Manage RODDY ID and buddies</a></p>');
 }
