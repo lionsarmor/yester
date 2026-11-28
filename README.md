@@ -8,6 +8,8 @@ Try the [interactive Android preview](https://android.yestersites.com/) to explo
 
 ## Screenshots
 
+[Send a page to a confirmed buddy](outputs/yester-mobile/review/phone/buddy-page-delivered.png). Open Share on the page rail to copy the exact link, use the system share sheet, or deliver an encrypted page card. The recipient can reopen the same diary entry and swipe to the next site.
+
 [Compare the four page actions in all twelve neighborhood frames](outputs/yester-mobile/review/page-action-frames.png). Tap blank page space to reveal or dismiss them. Open the three-ridge grip for the rail and browser controls together. More like this tunes discovery, Save bookmarks the exact page, the speaker toggles sound, and Share sends the page link. The controls fold after six idle seconds by default. See them on [Pixel Club’s diary](outputs/yester-mobile/review/phone/pixelclub-page-actions.png) and [Quarter Moon Arcade](outputs/yester-mobile/review/phone/arcade-page-actions.png).
 
 [The new neighborhood feed in Pigeon Press](outputs/yester-mobile/review/phone/neighborhood-feed.png) opens on Dot’s Pixel Attic. Tap the three-ridge grip to fold the toolbar, and an upward flick turns to the next site.
