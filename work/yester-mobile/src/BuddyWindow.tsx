@@ -16,7 +16,9 @@ export default function BuddyWindow({uri, close, openFeed}: {
         originWhitelist={["*"]}
         injectedJavaScript={"if(location.origin==='https://buddy.roddy.world')window.buddyInYester=true;true;"}
         onMessage={event=>{
-          if(event.nativeEvent.url.startsWith("https://buddy.roddy.world/") && event.nativeEvent.data==="close-buddy-share")close();
+          if(event.nativeEvent.data!=="close-buddy-share")return;
+          // Android can report only the origin here. iOS can report the document URL.
+          try{if(new URL(event.nativeEvent.url).origin==="https://buddy.roddy.world")close();}catch{}
         }}
         onShouldStartLoadWithRequest={request=>{
           const feed=openSharedFeed(request.url);

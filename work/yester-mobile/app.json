@@ -3,7 +3,7 @@
     "name": "YESTER",
     "slug": "yester-by-roddy",
     "scheme": "yester",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "ios": {
@@ -12,7 +12,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "10"
+      "buildNumber": "11"
     },
     "android": {
       "package": "world.roddy.yester",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive.png",
         "backgroundColor": "#20463f"
       },
-      "versionCode": 10
+      "versionCode": 11
     },
     "plugins": [
       "./plugins/browser-transport.cjs"
