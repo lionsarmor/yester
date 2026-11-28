@@ -105,19 +105,27 @@
       if(css.touchAction==='none' || (el.scrollWidth>el.clientWidth+2 && /auto|scroll/.test(css.overflowX)))return;
       if(scroller===document.scrollingElement && el.scrollHeight>el.clientHeight+2 && /auto|scroll/.test(css.overflowY))scroller=el;
     }
-    gesture={clientX:p.clientX,x:p.screenX,y:p.screenY,start:performance.now(),mouse,scroller,top:scroller.scrollTop,axis:null,held:false};
+    gesture={motionX:0,motionScale:null,clientX:p.clientX,x:p.screenX,y:p.screenY,start:performance.now(),mouse,scroller,top:scroller.scrollTop,axis:null,held:false};
     if(mouse)e.preventDefault();
   }
   function move(e,p,end){
     if(!gesture)return;
     const g=gesture,dx=p.screenX-g.x,dy=p.screenY-g.y,elapsed=performance.now()-g.start;
+    if(g.mouse && !end)g.motionX+=p.movementX;
     if(!g.axis && Math.max(Math.abs(dx),Math.abs(dy))>=9){
       g.axis=Math.abs(dx)>Math.abs(dy)*1.25?'x':'y';
       g.held=elapsed>=350;
+      // Calibrate mouse movement units against CSS pixels before the frame moves.
+      if(g.mouse && g.axis==='x' && Number.isFinite(g.motionX) && g.motionX!==0){
+        const scale=(p.clientX-g.clientX)/g.motionX;
+        if(scale>0)g.motionScale=scale;
+      }
     }
     if(g.axis==='x'){
       if(e.cancelable)e.preventDefault();
-      tell('page-drag',{phase:end?'end':'move',dx,localDx:p.clientX-g.clientX,dy,elapsed,held:g.held});
+      // Touch screen coordinates and relative mouse motion survive a moving iframe.
+      const dragX=g.mouse?(g.motionScale===null?undefined:g.motionX*g.motionScale):dx;
+      tell('page-drag',{phase:end?'end':'move',dx,dragX,localDx:p.clientX-g.clientX,dy,elapsed,held:g.held});
     }else if(g.axis==='y' && g.mouse)g.scroller.scrollTop=g.top-dy;
     if(end)gesture=null;
   }
