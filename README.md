@@ -8,6 +8,8 @@ Try the [interactive Android preview](https://android.yestersites.com/) to explo
 
 ## Screenshots
 
+[Compare the compact toolbar in all twelve neighborhood frames](outputs/yester-mobile/review/compact-frames.png). Heart tunes discovery for the site. Save bookmarks the exact page. More opens discovery, Library, sharing, sound, and settings.
+
 [The new neighborhood feed in Pigeon Press](outputs/yester-mobile/review/phone/neighborhood-feed.png) opens on Dot’s Pixel Attic. Tap the three-ridge grip to fold the toolbar, and an upward flick turns to the next site.
 
 Quarter Moon Arcade in **Pigeon Press**, Pocket Bog in **Cable Guide 96**, and the **frame cabinet** where you can switch between them.
